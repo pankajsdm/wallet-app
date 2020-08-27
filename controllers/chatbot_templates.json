@@ -1,0 +1,6 @@
+{
+    "vaid_email":"I've sent you an email, please check your inbox and click the confirm link to complete login.",
+    "invalid_email":"Sorry,invalid email! No user registerd at Bookzdoctor matches your input.Try again or click below to register/n<button>register</button>",
+    "valid_number":"Please enter the otp sent to your number",
+    "invalid_number":"Sorry mobile number not found./nNo user registered at Bookzdoctor matches your input./nType again your mobile number or email./nOr click below to register/n<button>Register</button>"
+}
