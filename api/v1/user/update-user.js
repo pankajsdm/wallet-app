@@ -54,16 +54,6 @@ const validator = createValidator({ passError: true });
  *             type: string
  *           file:
  *             type: object
- *           kyc:
- *             type: array
- *             items:
- *               type: object
- *               description: document upload
- *               properties:
- *                 type:
- *                   type: string
- *                 doc:
- *                   type: string
  *   responses:
  *    '200':
  *      description: success

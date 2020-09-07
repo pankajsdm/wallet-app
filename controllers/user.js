@@ -8,10 +8,10 @@ import { successAction, failAction } from '../utilities/response';
 import * as Mail from '../utilities/mail';
 import { checkTokenInParams, readFile } from '../utilities/universal';
 import * as userService from '../services/user';
-
+import { ROLE } from '../utilities/constants'
 import Message from '../utilities/messages';
-import { ROLE } from '../utilities/constants';
 import Events from "../utilities/event";
+
 
 
 /****************  register new user  ***********/
@@ -118,6 +118,21 @@ export const updateUser = async (req, res, next) => {
     res.status(400).json(failAction(error.message));
   }
 };
+
+/**************** update user info ***********/
+export const updateKYC = async (req, res, next) => {
+  const payload = req.body;
+  payload.files = req.files; 
+  payload.userId = req.user.userId;
+  payload.appUrl = `${req.protocol}://${req.headers.host}`;
+  try {
+    const data = await userService.updateUserKYC(payload);
+    res.status(200).json(successAction(data, Message.userUpdate));
+  } catch (error) {
+    res.status(400).json(failAction(error.message));
+  }
+};
+
 /**************** update user info ***********/
 export const getList = async (req, res, next) => {
   try {
@@ -137,8 +152,8 @@ export const forgotPassword = async (req, res, next) => {
     res.status(400).json(failAction(error.message));
   }
 };
-/**************** Update password ***********/
 
+/**************** Update password ***********/
 export const updatePassword = async (req, res, next) => {
   const payload = req.body;
   payload.userId = req.user.userId;

@@ -9,6 +9,7 @@ import fs from 'fs';
 import Jimp from 'jimp';
 import AWS from 'aws-sdk';
 import PATHDEF from './constants'
+import { promises } from 'dns';
 
 
 
@@ -34,6 +35,34 @@ export const uploadFormDataFile = async (buffer, filePath, fileName) => {
       return res;
     });
 };
+
+
+
+export const uploadDocument = async (fileObj, filePath) => {
+
+    const createPath =  path.join(__uploadDir, `${filePath}`);
+
+    fs.mkdir(createPath, { recursive: true }, (err, data) => {
+      if (err)  throw err;
+    });
+
+    return await new Promise((res, rej) => {
+      setTimeout( async () => {
+        let fileName = fileObj.file.name;
+        let imagePath = path.join(createPath, fileName);
+        await fileObj.file.mv(imagePath, (err) =>{
+          if(err) {
+            console.log("Problem to move file in directory", err)
+            rej(true)
+          }else
+            res(true)
+        })
+      }, 1000);
+    });
+
+
+};
+
 
 export const uploadFile = async (base64FileCode, filePath, fileName) => {
   let buffer = await decodeBase64Image(base64FileCode);

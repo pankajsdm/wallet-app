@@ -23,8 +23,9 @@ const http = require('http');
 /* Define global path */
 global.__basedir = __dirname;
 global.__publicDir = path.join(__dirname, '/public/');
-global.__imageDir = path.join(__dirname, '/public/uploads/');
-global.__uploadDir = path.join(__dirname, '/public/uploads/images/');
+global.__uploadDir = path.join(__dirname, '/public/uploads/');
+global.__imageDir = path.join(__dirname, '/public/uploads/images/');
+
 
 /* Access-Control-Allow-Origin */
 app.use(cors());

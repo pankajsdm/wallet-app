@@ -8,21 +8,28 @@ import config from 'config';
 import User from '../collections/user';
 import { generateOTP } from '../utilities/universal';
 import moment from "moment";
+import path from 'path';
 import momentZone from "moment-timezone";
 import Message from '../utilities/messages';
-import { uploadFormDataFile } from '../utilities/upload';
+import { uploadFormDataFile, uploadDocument } from '../utilities/upload';
 import { encryptpassword, generateToken, generateRandom, uploadImagebyBase64 } from '../utilities/universal';
 import * as Mail from '../utilities/mail';
-import { ROLE, LIMIT, RADIUS } from '../utilities/constants';
-const { webUrl } = config.get('app');
+import { ROLE, LIMIT, RADIUS, TWILIO } from '../utilities/constants';
 import Notifications from "../push/notification";
-import {
-  NOTIFICATION_CATEGORY,
-  NOTIFICATION_MESSAGE
-} from "../utilities/constants";
-
+import { NOTIFICATION_CATEGORY, NOTIFICATION_MESSAGE } from "../utilities/constants";
+const client = require('twilio')(TWILIO.accountSid, TWILIO.authToken);
+const { webUrl } = config.get('app');
+const fs = require("fs"); 
 var url = require('url');
  
+
+function sendOtp(otp, number){
+  return client.messages.create({
+    body: otp +' is registration verification otp for Bestpay app. Do not share it with anyone.',
+    from: TWILIO.number,
+    to: number
+  });
+}
 
 /********** Save user **********/
 export const save = async req => {
@@ -30,11 +37,14 @@ export const save = async req => {
   if (await User.checkEmail(payload.email)) throw new Error(Message.emailAlreadyExists);
   payload.password = encryptpassword(payload.password);
   payload.email = payload.email.toLowerCase();
-  payload.OTP = await generateOTP(6);
+  payload.OTP = {number: await generateOTP(6)};
   const userData = await User.saveUser({
     ...payload
   });
   
+  const mobileNumber = `${payload.mobile.code}${payload.mobile.number}`;
+  //await sendOtp(payload.OTP, mobileNumber);
+
   let token = generateToken({
     when: new Date(),
     role: userData.role,
@@ -44,7 +54,7 @@ export const save = async req => {
   const result = await Mail.htmlFromatWithObject(
     {
       data: { username: `${payload.firstName} ${payload.lastName}` ,
-        link: `${webUrl}/api/v1/confirmation/${token}`}
+      link: `${webUrl}/api/v1/confirmation/${token}`}
     },
     "user-account"
   );
@@ -66,13 +76,60 @@ export const save = async req => {
 
 
 export const otpVerification = async req => {
-  const userData =  await User.findOneByCondition({_id: req.user.userId, OTP: req.body.OTP})
+  const userData =  await User.findOneByCondition({_id: req.user.userId, "OTP.number": req.body.OTP})
   if(userData){
-    const payLoad = { userId: userData._id, OTP: "" }
+    const OTP = { number: "", isVerified: true }
+    const payLoad = { userId: userData._id, OTP: OTP }
     await User.updateUser(payLoad);
   }
   return userData;
 }
+
+
+/********* Update user info *********/
+export const updateUserInfo = async payload => {
+  if(payload.files){
+    const fileData = payload.files.file.data;
+    const folder = `images/profilepic/${payload.userId}`;
+    const fileName = `${Date.now()}-${payload.files.file.name}`;
+    const imageUploadStatus = await uploadFormDataFile(fileData, folder, fileName);  
+    if(imageUploadStatus){
+      const imgObject = {
+          filename: fileName,
+          src: `${payload.appUrl}/images/${folder}/original/${fileName}`,
+          thumbnail: `${payload.appUrl}/images/${folder}/thumbnail/${fileName}`,
+        };
+        payload.profileImage = imgObject;
+        return await User.updateUser(payload);
+    }
+  }
+  return await User.updateUser(payload);
+};
+
+
+/********* Update user kyc *********/
+export const updateUserKYC = async payload => {
+  if(payload.files){
+    const fileData = payload.files;
+    const folder = `documents/kyc/${payload.userId}`;
+    const docUploadStatus = await uploadDocument(fileData, folder); 
+    if(docUploadStatus){
+      const kycObject = {
+          kyc: {
+            type: payload.type,
+            fileName: payload.files.file.name,
+            fileUrl: `${payload.appUrl}/documents/${folder}/${payload.files.file.name}`,
+            filePath: path.join(__uploadDir, `${folder}/${payload.files.file.name}`)
+          }
+        };
+      const requestObj = {
+        kyc: kycObject,
+        userId: payload.userId
+      }
+      await User.updateKyc(requestObj);  
+    }  
+  }
+};
 
 /*********** Add credit/debit cards ***********/
 export const addCard = async payload => {
@@ -258,28 +315,6 @@ export const updateDevTok = async req => {
   return await User.updateDeviceToken(payload.userId, payload.token, payload.deviceToken);
 };
 
-/********* Update user info *********/
-export const updateUserInfo = async payload => {
-
-  if(payload.files){
-    const fileData = payload.files.file.data;
-    const folder = `profilepic/${payload.userId}`;
-    const fileName = `${Date.now()}-${payload.files.file.name}`;
-    const imageUploadStatus = await uploadFormDataFile(fileData, folder, fileName);  
-    if(imageUploadStatus){
-      const imgObject = {
-          filename: fileName,
-          src: `${payload.appUrl}/images/${folder}/original/${fileName}`,
-          thumbnail: `${payload.appUrl}/images/${folder}/thumbnail/${fileName}`,
-        };
-        console.log("new data is", imgObject);
-        payload.profileImage = imgObject;
-        return await User.updateUser(payload);
-    }
-  }
-
-  //return await User.updateUser(payload);
-};
 
 /********* get user list *********/
 export const getUsers = async payload => {

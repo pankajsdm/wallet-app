@@ -11,6 +11,7 @@ import otpVerify from './otp-verify';
 import Chatbotlogin from './Chatbotlogin';
 import logout from './logout';
 import updateUser from './update-user';
+import updateKYC from './kyc';
 import getUsers from './get-list';
 import forgotPassword from './forgot-passsword';
 import updatePassword from './update-password';
@@ -26,6 +27,7 @@ export default [
   Chatbotlogin,
   logout,
   updateUser,
+  updateKYC,
   getUsers,
   forgotPassword,
   updatePassword,

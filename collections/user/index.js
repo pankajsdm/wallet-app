@@ -71,6 +71,13 @@ class UserClass {
     return this.findByIdAndUpdate(payload.userId, updateData, { new: true });
   } 
 
+  static updateKyc(payload) {
+    let updateData = {
+      $push: payload.kyc
+    };
+    return this.updateOne({_id: payload.userId}, updateData);
+  } 
+
   static logout(userId, token) {
     let updateData = {
       $pull: { loginToken: { token } }

@@ -19,6 +19,12 @@ export const LIMIT = {
   TRANSACTIONS: 10
 };
 
+export const TWILIO = {
+  accountSid : 'AC73a69b8ea8cca6890e17fe0d104f63a7',
+  authToken  : '7e988fc88c40d080846e289412d3bfc1',
+  number: '+13345440726'
+}
+
 /******** Doctors Day Shift Time **********/
 export const dayShift = {
   start: "08:00:00",

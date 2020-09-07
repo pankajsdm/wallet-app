@@ -64,13 +64,30 @@ const userSchema = new mongoose.Schema(
           type: String,
           default: '' 
         },
-        doc: { 
+        fileName: { 
+          type: String, 
+          default: '' 
+        },
+        fileUrl: { 
+          type: String, 
+          default: '' 
+        },
+        filePath: { 
           type: String, 
           default: '' 
         }
       }
     ],
-    OTP: { type: Number, default: null },
+    OTP: { 
+      number: { type: Number, default: null},
+      isVerified: { type: Boolean, default: false}
+    },
+
+    wallet: {
+      number: { type: Number, default: 0},
+      createdAt: {type: Date, default: new Date()}
+    },
+
     loginToken: [
       {
         token: {
@@ -96,8 +113,8 @@ const userSchema = new mongoose.Schema(
       default: 0 // 0 account deleted, 1 active
     },
     emailVerified: {
-      type: Number,
-      default: 0 // 0 No, 1 Yes
+      type: Boolean,
+      default: false // 0 No, 1 Yes
     },
     socketId: {
       type: String,

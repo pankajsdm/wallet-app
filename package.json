@@ -33,12 +33,14 @@
     "express-joi-validation": "^4.0.3",
     "fs": "0.0.1-security",
     "http": "0.0.0",
+    "https": "~1.0.0",
     "jimp": "^0.10.3",
     "jsonwebtoken": "^8.5.1",
     "md5": "^2.2.1",
     "moment": "^2.26.0",
     "moment-timezone": "^0.5.31",
     "mongoose": "^5.5.12",
+    "multer": "^1.4.2",
     "nodemailer": "^6.4.6",
     "nodemailer-smtp-transport": "^2.7.4",
     "npm-run-all": "^4.1.5",
@@ -47,8 +49,8 @@
     "stripe": "^8.63.0",
     "swagger-jsdoc": "^3.4.0",
     "swagger-ui-express": "^4.1.2",
-    "uuid": "^8.0.0",
-    "https": "~1.0.0"
+    "twilio": "^3.49.1",
+    "uuid": "^8.0.0"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
