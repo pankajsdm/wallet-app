@@ -7,7 +7,7 @@ export default {
   confirm: 'Confirmed',
   success: 'Success!',
   systemError: 'Technical error ! Please try again later.',
-  emailAlreadyExists: ' Email id is already registered.',
+  emailAlreadyExists: 'Email already registered',
   invalidCredentials: 'Invalid user email or password.',
   serveyAdded: 'Survey added successfully!',
   surveyExist: 'Survey already exist!',
@@ -27,7 +27,14 @@ export default {
   requirementMissing: "Please fill correct information.", 
   loginConfirmMessage: "Email has been verified, please go to app for the next steps",
   doctorProfileVerificationIntimation: "The account has been verified. Our team will conduct a diligence, and interview to verify the credentials and notify you.",
-    /************ Page **************/
+
+  /************ Services **************/
+  serviceAdded: val => `${val} has been successfully added.`,
+  serviceUpdated: val => `${val} has been successfully updated.`,
+  serviceDeleted: val => `${val} has been successfully deleted.`,
+  serviceExist: 'Same service title is already exist. Please try with another title!',
+
+  /************ Page **************/
   pageAdded: val => `${val} has been successfully added.`,
   pageUpdated: val => `${val} has been successfully updated.`,
   pageDeleted: val => `${val} has been successfully deleted.`,

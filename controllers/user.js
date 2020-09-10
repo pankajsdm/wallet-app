@@ -168,7 +168,7 @@ export const updatePassword = async (req, res, next) => {
 /********* Get User Detail **************/
 export const getDetail = async (req, res, next) => {
   try {
-    const data = await userService.userDetail(req.body.userId);
+    const data = await userService.userDetail(req.user.userId);
     res.status(200).json(successAction(data, Message.success));
   } catch (error) {
     res.status(400).json(failAction(error.message));

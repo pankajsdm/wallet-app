@@ -58,7 +58,7 @@ const userSchema = Joi.object({
   role: Joi.number()
     .required()
     .allow('')
-    .valid(ROLE.ADMIN, ROLE.DOCTOR, ROLE.PATIENT)
+    .valid(ROLE.ADMIN, ROLE.CENTRALOFFICEUSER, ROLE.MARKEDLOCATIONUSER)
     .label('Role')
 });
 

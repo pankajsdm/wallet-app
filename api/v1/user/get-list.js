@@ -77,7 +77,7 @@ const userSchema = Joi.object({
     .optional()
     .label('paymentInfo'),
   role: Joi.number()
-    .valid(ROLE.DOCTOR, ROLE.PATIENT)
+    .valid(ROLE.CENTRALOFFICEUSER, ROLE.MARKEDLOCATIONUSER)
     .required()
     .label('Role'),
   dateRange: Joi.object()
@@ -88,7 +88,7 @@ const userSchema = Joi.object({
     .optional()
     .allow(null, '')
     .label('speciality'),
-  location: Joi.object({
+  /* location: Joi.object({
     coordinates: Joi.array()
       .items(Joi.number(), Joi.number())
       .min(2)
@@ -96,14 +96,14 @@ const userSchema = Joi.object({
   })
   .optional()
   .allow('')
-  .label('Location')
+  .label('Location') */
 
 });
 
 
 app.post(
   '/user',
-  decryptDataApi,
+  //decryptDataApi,
   validator.body(userSchema, {
     joi: { convert: true, allowUnknown: false }
   }),

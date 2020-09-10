@@ -5,14 +5,14 @@
  */
 import swaggerJsDocs from 'swagger-jsdoc';
 import config from 'config';
-const { host, apiHost, port } = config.get('app');
+const { name, host, apiHost, port } = config.get('app');
 
 const swaggerOptions = {
   swaggerDefinition: {
     info: {
-      title: 'Bookzdoctors project apis',
+      title: name,
       version: '1.0',
-      description: 'All api end points',
+      description: 'Endpoints of wallet app application.',
       contact: {
         name: 'Pankaj Pandey'
       },

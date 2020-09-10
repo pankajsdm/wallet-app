@@ -180,14 +180,13 @@ export const getAccountLinkService = async payload => {
 
 /********** Login users **********/
 export const onLogin = async payload => {
-  const role = payload['role'] ? [payload['role']]: [ROLE.DOCTOR, ROLE.PATIENT];
+  const role = payload['role'] ? [payload['role']]: [ROLE.CENTRALOFFICEUSER, ROLE.MARKEDLOCATIONUSER];
   const conditionObj = {};
   conditionObj.email = payload.email.toLowerCase();
   conditionObj.password = encryptpassword(payload.password);
   conditionObj.role = { $in: role };
   const userData = await User.findOneByCondition(conditionObj);
 
-  console.log("userData", userData)
   if (!userData) throw new Error(Message.invalidCredentials);
   if(userData.role === 2){
     if (userData.email_verified === 1 && userData.status === 0) 
@@ -219,7 +218,7 @@ export const onLogin = async payload => {
 export const onChatbotLoginVerificationDone = async payload => {
   const role = payload['role']
     ? [payload['role']]
-    : [ROLE.DOCTOR, ROLE.PATIENT];
+    : [ROLE.CENTRALOFFICEUSER, ROLE.MARKEDLOCATIONUSER];
   const conditionObj = {};
   conditionObj.email = payload.email;
   conditionObj.role = { $in: role };
@@ -252,7 +251,7 @@ export const onChatbotLoginVerificationDone = async payload => {
 export const onChatbotLogin = async payload => {
   const role = payload['role']
     ? [payload['role']]
-    : [ROLE.DOCTOR, ROLE.PATIENT];
+    : [ROLE.CENTRALOFFICEUSER, ROLE.MARKEDLOCATIONUSER];
   const emailId = payload['email'] ? payload['email'].toLowerCase(): "";
   const conditionObj = {email: emailId};
   const userData = await User.findOneByCondition(conditionObj);
@@ -319,7 +318,7 @@ export const updateDevTok = async req => {
 /********* get user list *********/
 export const getUsers = async payload => {
   let query = { role: { $ne: ROLE.ADMIN }, email_verified: 1 };
-  const radius = RADIUS.VALUE;
+  /* const radius = RADIUS.VALUE;
   const lng =  payload['location'].coordinates[0];
   const lat = payload['location'].coordinates[1];
   if(lat && lng){
@@ -331,7 +330,7 @@ export const getUsers = async payload => {
             ]
         }
         }};
-  }
+  } */
   if (payload['search']) {
     const regex = new RegExp(`${payload['search']}`, 'i');
     query = {

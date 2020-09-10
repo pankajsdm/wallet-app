@@ -49,10 +49,16 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: ''
     },
+
+    /*
+    * Define role for the user 
+    * 1 => ADMIN, 2 => CENTRALOFFICEUSER, 3 => MARKEDLOCATIONUSER, 4 => NORMALUSER
+    */
     role: {
       type: Number,
-      default: 2 // 1 => ADMIN, 2 => CENTRALOFFICEUSER, 3 => MARKEDLOCATIONUSER
+      default: 2 
     },
+
     profileImage: { 
       filename: { type: String, default: null },
       src: { type: String, default: null },
@@ -110,12 +116,13 @@ const userSchema = new mongoose.Schema(
     ],
     status: {
       type: Number,
-      default: 0 // 0 account deleted, 1 active
+      default: 0 
     },
     emailVerified: {
       type: Boolean,
-      default: false // 0 No, 1 Yes
+      default: false
     },
+    
     socketId: {
       type: String,
       default: null

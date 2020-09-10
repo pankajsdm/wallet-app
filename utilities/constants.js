@@ -7,10 +7,9 @@
 /********* User roles ********/
 export const ROLE = {
   ADMIN: 1,
-  DOCTOR: 2,
-  PATIENT:3,
-  CENTRALOFFICEUSER: 4,
-  MARKEDLOCATIONUSER: 5
+  CENTRALOFFICEUSER: 2,
+  MARKEDLOCATIONUSER: 3,
+  SUBSCRIBER: 4
 };
 /********* Records limit ********/
 export const LIMIT = {

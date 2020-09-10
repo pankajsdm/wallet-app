@@ -6,13 +6,13 @@
   "scripts": {
     "start": "nodemon --exec babel-node -- app.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rm -rf dist && babel . -d dist --ignore node_modules --out-dir dist && cp package.json dist && cp -R views dist && cp -R config dist  && cp -R email-templates dist && cp controllers/chatbot_templates.json dist/controllers",
-    "serve": "NODE_ENV=production pm2 start dist/app.js --name=bookzdoctors",
-    "live": "NODE_ENV=live pm2 start dist/app.js --name=bookzdoctors",
+    "build": "rm -rf dist && babel . -d dist --ignore node_modules --out-dir dist && cp package.json dist && cp -R views dist && cp -R config dist  && cp -R email-templates dist",
+    "serve": "NODE_ENV=production pm2 start dist/app.js --name=WalletApp",
+    "live": "NODE_ENV=live pm2 start dist/app.js --name=WalletApp",
     "ri": "rm -rf node_modules && npm install"
   },
   "keywords": [],
-  "author": "Shweta",
+  "author": "Pankaj",
   "dependencies": {
     "@hapi/joi": "^16.1.7",
     "apn": "^2.2.0",

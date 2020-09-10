@@ -2,13 +2,12 @@
   "app": {     
     "name": "Wallet App",
     "host": "localhost",
-    "port": 3002,
+    "port": 3050,
     "jwtAlgo": "HS512",
     "jwtKey": "walletapp",
-    "webUrl": "http://localhost:3002"
+    "webUrl": "http://localhost:3050"
   },
 "db": {
-
     "name": "walletApp",
     "host": "localhost",
     "auth": false,
@@ -22,22 +21,7 @@
       // If not connected, return errors immediately rather than waiting for reconnect
       "bufferMaxEntries": 0
     }
-},
-  /*  "db": {
-    "name": "bookzdoctor",
-    "host": "18.209.171.143",
-    "auth": true,
-    "username": "bookzdoctor",
-    "password": "bookzdoctors456",
-    "port": 27017,
-    "mongoose": {
-      "useMongoClient": true,
-      "autoIndex": true, // Don't build indexes
-      "poolSize": 10, // Maintain up to 10 socket connections
-      // If not connected, return errors immediately rather than waiting for reconnect
-      "bufferMaxEntries": 0
-    }
-  }, */
+  },
   "smtp": {
     "smtpUser": "support@bookzdoctor.com",
     "smtpPass": "BookzDoctor1989!",

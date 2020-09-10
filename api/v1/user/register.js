@@ -31,12 +31,17 @@ const validator = createValidator({ passError: true });
  *           email:
  *             type: string
  *             required:
- *           userName:
+ *           username:
  *             type: string
  *             required:
  *           mobile:
- *             type: string
- *             required:
+ *               type: object
+ *               description: mobile number
+ *               properties:
+ *                 code:
+ *                   type: string
+ *                 number:
+ *                   type: string
  *           password:
  *             type: string
  *             required:

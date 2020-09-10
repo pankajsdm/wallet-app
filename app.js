@@ -14,11 +14,12 @@ import * as DB from './db';
 import SwaggerJsDocs from './swagger-config';
 import SocketService from "./socket/socketService";
 import api from './api';
+import http from 'http';
 
 const { port } = config.get('app');
 const app = express();
 
-const http = require('http');
+
 
 /* Define global path */
 global.__basedir = __dirname;

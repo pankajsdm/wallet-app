@@ -21,17 +21,6 @@ const app = express();
  *        name: Authorization
  *        type: string
  *        required: true
- *      - in: body
- *        name: user
- *        description: api used to get user detail
- *        schema:
- *         type: object
- *         required:
- *          - user id
- *         properties:
- *           userId:
- *             type: string
- *             required:
  *   responses:
  *    '200':
  *      description: success
