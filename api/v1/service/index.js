@@ -5,9 +5,18 @@
  */
 
 
-import add from './add';
-import addProvider from './add-provider'
+import addService from './add-service';
+import updateService from './update-service';
+import getServices from './get-services';
+import deleteServices from './delete-service';
+import getSingleService from './get-single-service';
+import addProvider from './add-provider';
+
 export default [
-    add,
+    addService,
+    updateService,
+    getServices,
+    deleteServices,
+    getSingleService,
     addProvider
 ];

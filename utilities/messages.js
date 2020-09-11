@@ -15,6 +15,7 @@ export default {
   userAdded: 'You are registered successfully! A Verification OTP has been send to your mobile number, Please Confirm ',
   otpVerifySuccess: 'OTP verification successfull.',
   otpNotMatched: 'OTP not matched. Please enter correct OTP.',
+  userNotExist: 'Invalid user id',
   userSubscribed: 'You are subscribed successfully!',
   userAlreadySubscribed: 'You are already subscribed!',
   accountNotActivated: 'Please verify your account.',
@@ -28,15 +29,19 @@ export default {
   loginConfirmMessage: "Email has been verified, please go to app for the next steps",
   doctorProfileVerificationIntimation: "The account has been verified. Our team will conduct a diligence, and interview to verify the credentials and notify you.",
   unauthorizedUser: "You are not an authorized user to do this action",
+  
 
-  /************ Services **************/
-  serviceAdded: val => `${val} has been successfully added.`,
-  serviceUpdated: val => `${val} has been successfully updated.`,
-  serviceDeleted: val => `${val} has been successfully deleted.`,
-  serviceExist: 'Same service title is already exist. Please try with another title!',
+  /************ Common message by parameter **************/
+  dataAdded: val => `${val} has been successfully added.`,
+  dataUpdated: val => `${val} has been successfully updated.`,
+  dataDeleted: val => `${val} has been successfully deleted.`,
+  serviceExist: val => `Same ${val} is already exist. Please try with another ${val}!`,
 
   /************ Transaction **************/
   trasactionMade: val => `${val} has been made successfully.`,
+
+  /************ Location **************/
+  locationNotExist: 'Invalid location id',
 
   /************ Page **************/
   pageAdded: val => `${val} has been successfully added.`,

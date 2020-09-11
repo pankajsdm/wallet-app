@@ -14,6 +14,7 @@ export const ROLE = {
 /********* Records limit ********/
 export const LIMIT = {
   USERS: 10,
+  SERVICES: 10,
   APPOINTMENTS: 10,
   TRANSACTIONS: 10
 };
