@@ -90,7 +90,7 @@ const userSchema = new mongoose.Schema(
     },
 
     wallet: {
-      number: { type: Number, default: 0},
+      amount: { type: Number, default: 0},
       createdAt: {type: Date, default: new Date()}
     },
 

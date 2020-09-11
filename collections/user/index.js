@@ -26,9 +26,6 @@ class UserClass {
     ])
   }
 
-  static findPatientDetail(userId){
-    return this.findOne({ _id: userId}, {loginToken : 0, speciality: 0, lastLogin: 0, priceBracket: 0, socketId: 0, responseTime: 0, licenseExpiry: 0, licenseCountry: 0, licenseName: 0, doctorlicense: 0, createdAccountNumber: 0});
-  }
 
   static findOneByCondition(condition) {
     return this.findOne(condition);

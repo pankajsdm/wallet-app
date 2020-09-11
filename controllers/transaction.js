@@ -20,8 +20,8 @@ export const add = async (req, res, next) => {
     } catch (error) {
       res.status(400).json(failAction(error.message));
     }
-  }
-  return res.status(400).json(failAction(Message.unauthorizedUser));
+  }else
+    return res.status(400).json(failAction(Message.unauthorizedUser));
   
   
 };

@@ -22,5 +22,24 @@ export const addTransaction = async payload => {
   if (!locationData) 
     throw new Error(Message.locationNotExist);
 
-  return await Transaction.add(payload);
+   
+
+  let totalAmount = 0;
+  if(payload.type===1){
+    totalAmount = userData.wallet.amount + payload.amount;
+  } else{
+    if(userData.wallet.amount >= payload.amount)
+      totalAmount = userData.wallet.amount - payload.amount;
+    else
+      throw new Error(Message.invalidAmount);
+  }
+  
+  const transactionStatus =  await Transaction.add(payload);
+  if(transactionStatus && userData.wallet){
+    const updatedObj = { "wallet.amount": totalAmount, userId: payload.userId }
+    await User.updateUser(updatedObj);
+  }
+
+  return transactionStatus;
+
 };

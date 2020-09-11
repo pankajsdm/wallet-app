@@ -66,8 +66,8 @@ app.use((err, req, res, next) => {
 
 /* Run static setup */
 app.use(express.static(__dirname + '/views'));
-app.use(express.static(__dirname + '/views/web'));
-app.use(express.static(__dirname + '/views/admin'));
+app.use(express.static(__dirname + '/views/web'));   //this is for frontend web from angular build.
+app.use(express.static(__dirname + '/views/admin')); //this is for admin panel from angular build.
 app.use(express.static(__dirname + '/public/uploads'));
 
 app.get('/admin*', function(req, res) {

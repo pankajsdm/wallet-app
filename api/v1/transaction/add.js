@@ -44,6 +44,9 @@ const validator = createValidator({ passError: true });
  *           note:
  *             type: string
  *             required:
+ *           type:
+ *             type: number
+ *             required:
  *   responses:
  *    '200':
  *      description: success
@@ -62,6 +65,9 @@ const userSchema = Joi.object({
     amount: Joi.number()
       .required()
       .label('Amount'),
+    type: Joi.number()
+      .required()
+      .label('Type for add or substract'),
     note: Joi.string()
       .required()
       .label('Note')

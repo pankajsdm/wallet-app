@@ -39,6 +39,7 @@ export default {
 
   /************ Transaction **************/
   trasactionMade: val => `${val} has been made successfully.`,
+  invalidAmount: `Transaction amount should be less than user wallet amount`,
 
   /************ Location **************/
   locationNotExist: 'Invalid location id',
