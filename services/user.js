@@ -18,7 +18,7 @@ import { ROLE, LIMIT, RADIUS, TWILIO } from '../utilities/constants';
 import Notifications from "../push/notification";
 import { NOTIFICATION_CATEGORY, NOTIFICATION_MESSAGE } from "../utilities/constants";
 const client = require('twilio')(TWILIO.accountSid, TWILIO.authToken);
-const { webUrl } = config.get('app');
+const { webcUrl } = config.get('app');
 const fs = require("fs"); 
 var url = require('url');
  
@@ -379,7 +379,7 @@ export const forgotPasswordLink = async email => {
   const result = await Mail.htmlFromatWithObject(
     {
       data: {
-        username: `${user.firstName} ${user.lastName}`, link: `${webUrl}/change-password/${token}`
+        username: `${user.firstName} ${user.lastName}`, link: `${webUrl}/auth/reset-password/${token}`
       }
     },
     'forgot-password'
@@ -389,7 +389,7 @@ export const forgotPasswordLink = async email => {
     subject: Mail.subjects.forgotPassword,
     html: result.html
   };
-
+  
   Mail.sendMail(emailData, function(err, res) {
     if (err) console.log('-----@@----- Error at sending verify mail to user -----@@-----', err);
     else console.log('-----@@----- Response at sending verify mail to user -----@@-----', res);

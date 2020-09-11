@@ -22,5 +22,13 @@
       // If not connected, return errors immediately rather than waiting for reconnect
       "bufferMaxEntries": 0
     }
+  },
+
+  "smtp": {
+    "smtpUser": "support@bookzdoctor.com",
+    "smtpPass": "BookzDoctor1989!",
+    "smtpPort": 587, 
+    "smtpServer": "smtpout.secureserver.net",
+    "mailFrom": "support@bookzdoctor.com"
   }
 }

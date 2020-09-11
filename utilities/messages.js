@@ -27,12 +27,16 @@ export default {
   requirementMissing: "Please fill correct information.", 
   loginConfirmMessage: "Email has been verified, please go to app for the next steps",
   doctorProfileVerificationIntimation: "The account has been verified. Our team will conduct a diligence, and interview to verify the credentials and notify you.",
+  unauthorizedUser: "You are not an authorized user to do this action",
 
   /************ Services **************/
   serviceAdded: val => `${val} has been successfully added.`,
   serviceUpdated: val => `${val} has been successfully updated.`,
   serviceDeleted: val => `${val} has been successfully deleted.`,
   serviceExist: 'Same service title is already exist. Please try with another title!',
+
+  /************ Transaction **************/
+  trasactionMade: val => `${val} has been made successfully.`,
 
   /************ Page **************/
   pageAdded: val => `${val} has been successfully added.`,

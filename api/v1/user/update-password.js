@@ -53,7 +53,7 @@ const userSchema = Joi.object({
 
 app.put(
   '/user/password',
-  decryptDataApi,
+  //decryptDataApi,
   validator.body(userSchema, {
     joi: { convert: true, allowUnknown: false }
   }),

@@ -67,11 +67,11 @@ app.use((err, req, res, next) => {
 /* Run static setup */
 app.use(express.static(__dirname + '/views'));
 app.use(express.static(__dirname + '/views/web'));
-app.use(express.static(__dirname + '/views/dist'));
+app.use(express.static(__dirname + '/views/admin'));
 app.use(express.static(__dirname + '/public/uploads'));
 
 app.get('/admin*', function(req, res) {
-  return res.sendFile(path.join(__dirname + '/views/dist', 'index.html'));
+  return res.sendFile(path.join(__dirname + '/views/admin', 'index.html'));
 });
 
 app.get('/*', function(req, res) {
