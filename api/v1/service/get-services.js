@@ -13,7 +13,7 @@ const validator = createValidator({ passError: true });
 
 /**
  * @swagger
- * /api/v1/services/get-lists:
+ * /api/v1/service/get-lists:
  *  post:
  *   tags: ["services"]
  *   summary: services list api
@@ -54,7 +54,7 @@ const userSchema = Joi.object({
 
 
 app.post(
-  '/services/get-lists',
+  '/service/get-lists',
   //decryptDataApi,
   validator.body(userSchema, {
     joi: { convert: true, allowUnknown: false }
