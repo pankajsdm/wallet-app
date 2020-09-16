@@ -7,16 +7,16 @@
 import express from 'express';
 import { createValidator } from 'express-joi-validation';
 import Joi from '@hapi/joi';
-import { add, addProvider } from '../../../controllers/service'
+import { addProvider } from '../../../controllers/service'
 import { checkToken, decryptDataApi } from '../../../utilities/universal';
 const app = express();
 const validator = createValidator({ passError: true });
 
 /**
  * @swagger
- * /api/v1/service/add-provider:
+ * /api/v1/service/provider/add:
  *  post:
- *   tags: ["services"]
+ *   tags: ["Service Providers"]
  *   summary: add service provider
  *   description: api used to add service provider
  *   parameters:
@@ -61,7 +61,7 @@ const userSchema = Joi.object({
   });
 
 app.post(
-  '/service/add-provider',
+  '/service/provider/add',
   //decryptDataApi,
   validator.body(userSchema, {
     joi: { convert: true, allowUnknown: false }

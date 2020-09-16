@@ -49,12 +49,13 @@ export const generateRandom = (length = 32, alphanumeric = true) => {
 /*********** Generate JWT token *************/
 export const generateToken = data =>
   jwt.sign(data, jwtKey, { algorithm: jwtAlgo, expiresIn: '90d' });
+
 /*********** Decode JWT token *************/
 export const decodeToken = token => jwt.verify(token, jwtKey);
+
 /*********** Verify token *************/
 export const checkToken = async (req, res, next) => {
   const token = req.headers['authorization'];
-  //console.log('url => ', req.originalUrl);
   if (!token)
     return res.status(401).json(failAction(Message.unauthorizedUser, 401));
   let decoded = {};

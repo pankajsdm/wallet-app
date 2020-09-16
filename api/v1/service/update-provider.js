@@ -1,24 +1,24 @@
 /*
  * @file: add.js
- * @description: Router is used to add transaction
+ * @description: Router is used to add new service
  * @author: Pankaj Pandey
  */
 
 import express from 'express';
 import { createValidator } from 'express-joi-validation';
 import Joi from '@hapi/joi';
-import { add } from '../../../controllers/transaction'
+import { updateProvider } from '../../../controllers/service'
 import { checkToken, decryptDataApi } from '../../../utilities/universal';
 const app = express();
 const validator = createValidator({ passError: true });
 
 /**
  * @swagger
- * /api/v1/transaction/add:
- *  post:
- *   tags: ["Transaction"]
- *   summary: Add amount to particular user wallet
- *   description: api used to add amount to particular user wallet
+ * /api/v1/service/provider/update:
+ *  put:
+ *   tags: ["Service Providers"]
+ *   summary: Update service provider
+ *   description: api used to update service provider
  *   parameters:
  *      - in: header
  *        name: Authorization
@@ -26,25 +26,22 @@ const validator = createValidator({ passError: true });
  *        required: true
  *      - in: body
  *        name: user
- *        description: Add amount to particular user wallet
+ *        description: update service provider
  *        schema:
  *         type: object
  *         required:
- *          - user add
+ *          - service provider update
  *         properties:
- *           userId:
- *            type: string
- *            required:  
- *           locationId:
- *            type: string
- *            required: 
- *           amount:
- *             type: number
- *             required:
- *           note:
+ *           _id:
  *             type: string
  *             required:
- *           type:
+ *           title:
+ *             type: string
+ *             required:
+ *           description:
+ *             type: string
+ *             required:
+ *           status:
  *             type: number
  *             required:
  *   responses:
@@ -56,31 +53,25 @@ const validator = createValidator({ passError: true });
 
 
 const userSchema = Joi.object({
-    userId: Joi.string()
+    _id: Joi.string()
       .required()
-      .label('User Id'),
-    locationId: Joi.string()
+      .label('Id'),
+    title: Joi.string()
       .required()
-      .label('Location Id'),
-    amount: Joi.number()
-      .required()
-      .label('Amount'),
-    type: Joi.number()
-      .required()
-      .label('Type for add or substract'),
-    note: Joi.string()
-      .required()
-      .label('Note')
+      .label('Title'),
+    description: Joi.string()
+      .label('Description'),
+    status: Joi.number()
+      .label('Status')
   });
 
-app.post(
-  '/trasaction/add',
-  //decryptDataApi,
+app.put(
+  '/service/provider/update',
   validator.body(userSchema, {
     joi: { convert: true, allowUnknown: false }
   }),
   checkToken,
-  add
+  updateProvider
 );
 
 export default app;

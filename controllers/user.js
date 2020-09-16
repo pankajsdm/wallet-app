@@ -21,7 +21,7 @@ export const registerUser = async (req, res, next) => {
     const data = await userService.save(payload);
     res.status(200).json(successAction(data, Message.userAdded));
   } catch (error) {
-    res.status(400).json(error.message);
+    res.status(400).json(failAction(error.message));
   }
 };
 
@@ -35,7 +35,7 @@ export const otpVerification = async(req, res, next)=> {
     else
       res.status(400).json(successAction([], Message.otpNotMatched));
   } catch (error) {
-    res.status(400).json(error.message);
+    res.status(400).json(failAction(error.message));
   }
 };
 
@@ -56,7 +56,6 @@ export const login = async (req, res, next) => {
 export const chatbot_login = async (req, res, next) => {
   const payload = req.body;
   try {
-   // Events.emit("chatbotLoggedInEvent", {payload});
     const data = await userService.onChatbotLogin(payload);
     res.status(200).json(successAction(data, Message.success));
   } catch (error) {

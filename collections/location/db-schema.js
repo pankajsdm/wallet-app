@@ -38,9 +38,12 @@ const locationSchema = new mongoose.Schema(
       required: true
     },
 
-    coords: {
-      lat: { type: String, default: null },
-      lng: { type: String, default: null },
+    location: {
+      type: {
+        type: String,
+        required: true
+      },
+      coordinates: []
     },
 
     status: {

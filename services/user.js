@@ -15,16 +15,16 @@ import { uploadFormDataFile, uploadDocument } from '../utilities/upload';
 import { encryptpassword, generateToken, generateRandom, uploadImagebyBase64 } from '../utilities/universal';
 import * as Mail from '../utilities/mail';
 import { ROLE, LIMIT, RADIUS, TWILIO } from '../utilities/constants';
-import Notifications from "../push/notification";
+//import Notifications from "../push/notification";
 import { NOTIFICATION_CATEGORY, NOTIFICATION_MESSAGE } from "../utilities/constants";
 const client = require('twilio')(TWILIO.accountSid, TWILIO.authToken);
-const { webcUrl } = config.get('app');
+const { webUrl } = config.get('app');
 const fs = require("fs"); 
 var url = require('url');
  
 
 function sendOtp(otp, number){
-  return client.messages.create({
+  client.messages.create({
     body: otp +' is registration verification otp for Bestpay app. Do not share it with anyone.',
     from: TWILIO.number,
     to: number
@@ -34,16 +34,19 @@ function sendOtp(otp, number){
 /********** Save user **********/
 export const save = async req => {
   const payload = req.body;
-  if (await User.checkEmail(payload.email)) throw new Error(Message.emailAlreadyExists);
+  if (await User.checkEmail(payload.email)) 
+    throw new Error(Message.emailAlreadyExists);
+  
+  let OTP = await generateOTP(6);
   payload.password = encryptpassword(payload.password);
   payload.email = payload.email.toLowerCase();
-  payload.OTP = {number: await generateOTP(6)};
+  payload.OTP = {number: OTP};
   const userData = await User.saveUser({
     ...payload
   });
-  
+
   const mobileNumber = `${payload.mobile.code}${payload.mobile.number}`;
-  //await sendOtp(payload.OTP, mobileNumber);
+  await sendOtp(OTP, mobileNumber);
 
   let token = generateToken({
     when: new Date(),
@@ -538,7 +541,7 @@ export const updateConnectWebhook = async (request) => {
               title: "Stripe Account Approval"
           };
           console.log('connectApproval...........',notificationObj);
-          Notifications.SINGLE(notificationObj);
+          //Notifications.SINGLE(notificationObj);
         }
         console.log('accountUpdated case',reqString);
         //Events.emit("details_pending", { data: reqString, id: UserId.userId });

@@ -11,6 +11,7 @@ class UserClass {
   static saveUser(payload) {
     return this(payload).save();
   }
+  
   static checkEmail(email) {
     return this.findOne({ email });
   }

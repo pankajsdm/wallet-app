@@ -1,23 +1,23 @@
 /*
  * @file: get-list.js
- * @description: It Contain get user list router/api.
+ * @description: It fetch single provider router/api.
  * @author: Pankaj Pandey
  */
 import express from 'express';
 import { createValidator } from 'express-joi-validation';
 import Joi from '@hapi/joi';
-import { getSingleService } from '../../../controllers/service';
+import { getSingleProvider } from '../../../controllers/service';
 import { checkToken, decryptDataApi } from '../../../utilities/universal';
 const app = express();
 const validator = createValidator({ passError: true });
 
 /**
  * @swagger
- * /api/v1/service/get:
+ * /api/v1/service/provider/get:
  *  post:
- *   tags: ["Services"]
- *   summary: get service by id api
- *   description: api used to get service by id
+ *   tags: ["Service Providers"]
+ *   summary: get provider by id api
+ *   description: api used to get provider by id
  *   security:
  *    - OAuth2: [admin]   # Use Authorization
  *   parameters:
@@ -27,11 +27,11 @@ const validator = createValidator({ passError: true });
  *        required: true
  *      - in: body
  *        name: service
- *        description: Get single service by its id
+ *        description: Get single provider by its id
  *        schema:
  *         type: object
  *         required:
- *          - get single service
+ *          - get single provider
  *         properties:
  *           _id:
  *             type: string
@@ -43,9 +43,9 @@ const validator = createValidator({ passError: true });
  */
 
 app.post(
-  '/service/get',
+  '/service/provider/get',
   checkToken,
-  getSingleService
+  getSingleProvider
 );
 
 export default app;

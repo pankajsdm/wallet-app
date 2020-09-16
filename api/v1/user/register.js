@@ -72,7 +72,7 @@ const userSchema = Joi.object({
       .label('Password'),
     role: Joi.number()
       .required()
-      .valid(ROLE.ADMIN, ROLE.CENTRALOFFICEUSER, ROLE.MARKEDLOCATIONUSER)
+      .valid(ROLE.ADMIN, ROLE.CENTRALOFFICEUSER, ROLE.MARKEDLOCATIONUSER, ROLE.SUBSCRIBER)
       .label('Role')
   });
 

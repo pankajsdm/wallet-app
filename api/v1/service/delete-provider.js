@@ -1,38 +1,36 @@
 /*
  * @file: add.js
- * @description: Router is used to add new service
+ * @description: Router is used to delete service provider
  * @author: Pankaj Pandey
  */
 
 import express from 'express';
 import { createValidator } from 'express-joi-validation';
 import Joi from '@hapi/joi';
-import { deleteService } from '../../../controllers/service'
+import { deleteProvider } from '../../../controllers/service'
 import { checkToken, decryptDataApi } from '../../../utilities/universal';
 const app = express();
 const validator = createValidator({ passError: true });
 
 /**
  * @swagger
- * /api/v1/service/delete/{id}:
+ * /api/v1/service/provider/delete/{id}:
  *  delete:
- *   tags: ["Services"]
+ *   tags: ["Service Providers"]
  *   consumes:
  *    - multipart/form-data
- *   summary: delete file api
- *   description: api used to delete service
- *   security:
- *    - OAuth2: [admin]   # Use Authorization
+ *   summary: Delete service provider 
+ *   description: api used to delete service provider
  *   parameters:
  *      - in: header
  *        name: Authorization
  *        type: string
  *        required: true
- *      - in: path
+*      - in: path
  *        name: id
  *        type: string
  *        required: true
- *        description: The delete files router.
+ *        description: Required provider id
  *   responses:
  *    '200':
  *      description: success
@@ -41,10 +39,11 @@ const validator = createValidator({ passError: true });
  */
 
 
+
 app.delete(
-  '/service/delete/:_id',
+  '/service/provider/delete/:_id',
   checkToken,
-  deleteService
+  deleteProvider
 );
 
 export default app;

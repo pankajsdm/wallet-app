@@ -9,7 +9,7 @@ import * as locationService from '../services/location';
 import Message from '../utilities/messages';
 import { ROLE } from '../utilities/constants';
 
-/**************** Add service ***********/
+/**************** Add location for branch and marked location ***********/
 export const add = async (req, res, next) => {
 
   if (req.user.role !== ROLE.ADMIN)
@@ -19,7 +19,20 @@ export const add = async (req, res, next) => {
     const payload = req.body;
     payload.userId = req.user.userId;
     const data = await locationService.addLocation(payload);
-    res.status(200).json(successAction(data, Message.serviceAdded(payload.type)));
+    res.status(200).json(successAction(data, Message.dataAdded(payload.type)));
+  } catch (error) {
+    res.status(400).json(failAction(error.message));
+  }
+};
+
+
+/**************** Get nearby office ***********/
+export const nearby = async (req, res, next) => {
+
+  try {
+    const payload = req.body;
+    const data = await locationService.getNearBy(payload);
+    res.status(200).json(successAction(data, Message.success));
   } catch (error) {
     res.status(400).json(failAction(error.message));
   }

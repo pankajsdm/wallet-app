@@ -6,6 +6,9 @@
 
 
 import add from './add';
+import nearBy from './nearby';
+
 export default [
-    add
+    add,
+    nearBy
 ];

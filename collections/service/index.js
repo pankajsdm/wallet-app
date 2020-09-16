@@ -6,7 +6,6 @@
 
 import mongoose from 'mongoose';
 import dbSchema from './db-schema';
-import { LIMIT } from '../../utilities/constants';
 
 class ServiceClass {
 
@@ -29,25 +28,16 @@ class ServiceClass {
 
   static delete(condition) {
     return this.remove({ ...condition,});
-  }
-
-  static addProvider(payload) {
-    let updateData = {
-      $push: {
-        providers: payload.providers
-      }
-    };
-    return this.updateOne({_id: payload.serviceId}, updateData);
   } 
 
-  static getServiceList(condition, pageNo) {
+  static getServiceList(condition, pageNo, limit) {
      const query = [ 
         {$match: condition},
         {$sort: { createdAt: -1 } },
     ]
     const pagination = [
-      { $skip: pageNo ? (pageNo - 1) * LIMIT.SERVICES : 0 },
-      { $limit: LIMIT.SERVICES }
+      { $skip: pageNo ? (pageNo - 1) * limit : 0 },
+      { $limit: limit }
     ];
 
     const aggregateQuery = this.aggregate([...query, ...pagination]);

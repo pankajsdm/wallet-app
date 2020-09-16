@@ -1,23 +1,23 @@
 /*
  * @file: get-list.js
- * @description: It Contain get user list router/api.
+ * @description: It fetch  list of  provider plan router/api.
  * @author: Pankaj Pandey
  */
 import express from 'express';
 import { createValidator } from 'express-joi-validation';
 import Joi from '@hapi/joi';
-import { getSingleService } from '../../../controllers/service';
+import { listProviderPlan } from '../../../controllers/service';
 import { checkToken, decryptDataApi } from '../../../utilities/universal';
 const app = express();
 const validator = createValidator({ passError: true });
 
 /**
  * @swagger
- * /api/v1/service/get:
+ * /api/v1/service/provider/plan/lists:
  *  post:
- *   tags: ["Services"]
- *   summary: get service by id api
- *   description: api used to get service by id
+ *   tags: ["Provider Plans"]
+ *   summary: get  list of provider plan  api
+ *   description: api used to get list of provider plan by id
  *   security:
  *    - OAuth2: [admin]   # Use Authorization
  *   parameters:
@@ -27,13 +27,13 @@ const validator = createValidator({ passError: true });
  *        required: true
  *      - in: body
  *        name: service
- *        description: Get single service by its id
+ *        description: Get  list of provider plan
  *        schema:
  *         type: object
  *         required:
- *          - get single service
+ *          - get list of provider plan params
  *         properties:
- *           _id:
+ *           serviceId:
  *             type: string
  *   responses:
  *    '200':
@@ -42,10 +42,19 @@ const validator = createValidator({ passError: true });
  *      description: fail
  */
 
+const planSchema = Joi.object({
+    serviceId: Joi.string()
+      .required()
+      .label('Service Id')
+});
+
 app.post(
-  '/service/get',
+  '/service/provider/plan/lists',
+  validator.body(planSchema, {
+    joi: { convert: true, allowUnknown: false }
+  }),
   checkToken,
-  getSingleService
+  listProviderPlan
 );
 
 export default app;

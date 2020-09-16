@@ -1,23 +1,23 @@
 /*
  * @file: get-services.js
- * @description: It Contain get user list router/api.
+ * @description: It contain get provider list router/api.
  * @author: Pankaj Pandey
  */
 import express from 'express';
 import { createValidator } from 'express-joi-validation';
 import Joi from '@hapi/joi';
-import { getLists } from '../../../controllers/service';
+import { getProviders } from '../../../controllers/service';
 import { checkToken } from '../../../utilities/universal';
 const app = express();
 const validator = createValidator({ passError: true });
 
 /**
  * @swagger
- * /api/v1/service/lists:
+ * /api/v1/service/provider/lists:
  *  post:
- *   tags: ["services"]
- *   summary: Getting the services list
- *   description: api used to get list of the services
+ *   tags: ["Service Providers"]
+ *   summary: Getting the provider list
+ *   description: api used to get list of the provider
  *   security:
  *    - OAuth2: [admin]   # Use Authorization
  *   parameters:
@@ -27,13 +27,19 @@ const validator = createValidator({ passError: true });
  *        required: true
  *      - in: body
  *        name: user
- *        description: The services filter list.
+ *        description: The provider filter list.
  *        schema:
  *         type: object
  *         properties:
+ *           serviceId:
+ *             type: string
+ *             required:
  *           search:
  *             type: string
  *           page:
+ *             type: number
+ *             required:
+ *           limit:
  *             type: number
  *             required:
  *   responses:
@@ -43,26 +49,29 @@ const validator = createValidator({ passError: true });
  *      description: fail
  */
 const serviceSchema = Joi.object({
+  serviceId: Joi.string()
+    .required()
+    .label('Service Id'),
   search: Joi.string()
     .optional()
     .allow('')
     .label('Search'),
   page: Joi.number()
     .required()
-    .label('Page Number')
+    .label('Page Number'),
+  limit: Joi.number()
+    .required()
+    .label('Limit')
 });
 
 
 app.post(
-  '/service/lists',
-  //decryptDataApi,
-  /* validator.body(serviceSchema, {
+  '/service/provider/lists',
+  validator.body(serviceSchema, {
     joi: { convert: true, allowUnknown: false }
   }),
-  checkToken, */
-  (req, res, next) =>{
-    console.log("I am posting for getting service list")
-  }
+  checkToken,
+  getProviders
 );
 
 export default app;

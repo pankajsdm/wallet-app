@@ -12,11 +12,13 @@ class LocationClass {
   static add(payload) {
     return this(payload).save();
   }
+  
   static findOneByCondition(condition) {
     return this.findOne({ ...condition, status: true });
   }
-  static findByCondition(condition) {
-    return this.find({ status: true, ...condition });
+  
+  static findAll(condition) {
+    return this.find(condition);
   }
 
 }

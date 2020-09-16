@@ -15,7 +15,7 @@ import { generateSlug } from '../utilities/universal';
 export const saveService = async payload => {
   payload.slug = generateSlug(payload.title);
   if (await Service.findOneByCondition({ slug: payload.slug}))
-    throw new Error(Message.serviceExist('Service'));
+    throw new Error(Message.dataExist('service'));
 
   return await Service.add(payload);
 };
@@ -24,8 +24,8 @@ export const saveService = async payload => {
 /********** Save Page **********/
 export const updateService = async payload => {
   payload.slug = generateSlug(payload.title);
-  if (await Service.findOneByCondition({ slug: payload.slug}))
-    throw new Error(Message.serviceExist);
+  if (await Service.findOneByCondition({ _id: { $ne: payload._id }, slug: payload.slug}))
+    throw new Error(Message.dataExist('service'));
 
   return await Service.updateById(payload);
 };
@@ -35,26 +35,9 @@ export const deleteService = async payload => {
   return await Service.delete({_id: payload._id});
 };
 
-/********* Add provider *********/
-export const addProvider = async payload => {
-  const providers = {
-    title: payload.title,
-    slug: generateSlug(payload.title),
-    description: payload.description,
-  };
-
-  const updatedObject = {
-    serviceId: payload.serviceId,
-    providers: providers
-  }
-  return await Service.addProvider(updatedObject); 
-};
-
-
 
 /********* get user list *********/
 export const getAll = async payload => {
-  
   let query = { status: 1 };
   if (payload.search) {
     const regex = new RegExp(`${payload.search}`, 'i');
@@ -67,12 +50,12 @@ export const getAll = async payload => {
       ]
     };
   }
-  const data = await Service.getServiceList(query, payload['page']);
+  const data = await Service.getServiceList(query, payload['page'], payload['limit']);
   const totalRecords = await data.totalRecords;
   return {
     list: await data.list,
     total: totalRecords.length,
-    limit: LIMIT.SERVICES
+    limit: (payload['limit'])?payload['limit']:LIMIT.SERVICES
   };
 };
 

@@ -16,7 +16,7 @@ const validator = createValidator({ passError: true });
  * @swagger
  * /api/v1/location/add:
  *  post:
- *   tags: ["location"]
+ *   tags: ["Location"]
  *   summary: Add location for branch and marked location
  *   description: api used to location for branch and marked location
  *   parameters:
@@ -44,14 +44,12 @@ const validator = createValidator({ passError: true });
  *           address:
  *             type: string
  *             required:
- *           coords:
- *               type: object
- *               description: cordinates for lat and lng
- *               properties:
- *                 lat:
- *                   type: string
- *                 lng:
- *                   type: string
+ *           latitude:
+ *             type: number
+ *             required:
+ *           longitude:
+ *             type: number
+ *             required:
  *   responses:
  *    '200':
  *      description: success
@@ -72,15 +70,16 @@ const userSchema = Joi.object({
     address: Joi.string()
       .required()
       .label('Office address'),
-    coords: Joi.object({
-        lat: Joi.string().required().label('Latitude'),
-        lng: Joi.string().required().label('Longitude'),
-    }),
+    latitude: Joi.number()
+      .required()
+      .label('Latitude'),
+    longitude: Joi.number()
+      .required()
+      .label('Longitude'),
   });
 
 app.post(
   '/location/add',
-  //decryptDataApi,
   validator.body(userSchema, {
     joi: { convert: true, allowUnknown: false }
   }),

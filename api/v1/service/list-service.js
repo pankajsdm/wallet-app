@@ -1,24 +1,25 @@
 /*
- * @file: add.js
- * @description: Router is used to add new service
+ * @file: list-services.js
+ * @description: It Contain get service list router/api.
  * @author: Pankaj Pandey
  */
-
 import express from 'express';
 import { createValidator } from 'express-joi-validation';
 import Joi from '@hapi/joi';
-import { add } from '../../../controllers/service'
-import { checkToken, decryptDataApi } from '../../../utilities/universal';
+import { getLists } from '../../../controllers/service';
+import { checkToken } from '../../../utilities/universal';
 const app = express();
 const validator = createValidator({ passError: true });
 
 /**
  * @swagger
- * /api/v1/service/add:
+ * /api/v1/service/lists:
  *  post:
  *   tags: ["Services"]
- *   summary: Add Service
- *   description: api used to add new service
+ *   summary: Getting the services list
+ *   description: api used to get list of the services
+ *   security:
+ *    - OAuth2: [admin]   # Use Authorization
  *   parameters:
  *      - in: header
  *        name: Authorization
@@ -26,17 +27,17 @@ const validator = createValidator({ passError: true });
  *        required: true
  *      - in: body
  *        name: user
- *        description: Add new service
+ *        description: The services filter list.
  *        schema:
  *         type: object
- *         required:
- *          - user add
  *         properties:
- *           title:
+ *           search:
  *             type: string
+ *           page:
+ *             type: number
  *             required:
- *           description:
- *             type: string
+ *           limit:
+ *             type: number
  *             required:
  *   responses:
  *    '200':
@@ -44,24 +45,27 @@ const validator = createValidator({ passError: true });
  *    '400':
  *      description: fail
  */
-
-
 const serviceSchema = Joi.object({
-    title: Joi.string()
-      .required()
-      .label('Service title'),
-    description: Joi.string()
-      .label('Description')
-  });
+  search: Joi.string()
+    .optional()
+    .allow('')
+    .label('Search'),
+  page: Joi.number()
+    .required()
+    .label('Page Number'),
+  limit: Joi.number()
+    .required()
+    .label('Limit'),
+});
+
 
 app.post(
-  '/service/add',
-  //decryptDataApi,
+  '/service/lists',
   validator.body(serviceSchema, {
     joi: { convert: true, allowUnknown: false }
   }),
   checkToken,
-  add
+  getLists
 );
 
 export default app;

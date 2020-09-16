@@ -1,24 +1,24 @@
 /*
  * @file: add.js
- * @description: Router is used to add new service
+ * @description: Router is used to update plan for provider
  * @author: Pankaj Pandey
  */
 
 import express from 'express';
 import { createValidator } from 'express-joi-validation';
 import Joi from '@hapi/joi';
-import { update } from '../../../controllers/service'
+import { updateProviderPlan } from '../../../controllers/service'
 import { checkToken, decryptDataApi } from '../../../utilities/universal';
 const app = express();
 const validator = createValidator({ passError: true });
 
 /**
  * @swagger
- * /api/v1/service/update:
+ * /api/v1/service/provider/plan/update:
  *  put:
- *   tags: ["Services"]
- *   summary: Update Service
- *   description: api used to update service
+ *   tags: ["Provider Plans"]
+ *   summary: update plan for service provider
+ *   description: api used to update plan for service provider
  *   parameters:
  *      - in: header
  *        name: Authorization
@@ -26,22 +26,31 @@ const validator = createValidator({ passError: true });
  *        required: true
  *      - in: body
  *        name: user
- *        description: update service
+ *        description: update plan for service provider
  *        schema:
  *         type: object
  *         required:
- *          - service update
+ *          - Update plan params: 
  *         properties:
- *           _id:
+ *          _id:
  *             type: string
  *             required:
- *           title:
+ *          providerId:
  *             type: string
  *             required:
- *           description:
+ *          title:
  *             type: string
  *             required:
- *           status:
+ *          code:
+ *             type: number
+ *             required:
+ *          price:
+ *             type: number
+ *             required:
+ *          description:
+ *             type: string
+ *             required:
+ *          status:
  *             type: number
  *             required:
  *   responses:
@@ -55,10 +64,19 @@ const validator = createValidator({ passError: true });
 const userSchema = Joi.object({
     _id: Joi.string()
       .required()
-      .label('Service Id'),
+      .label('Plan ID'),
+    providerId: Joi.string()
+      .required()
+      .label('Provider ID'),
     title: Joi.string()
       .required()
-      .label('Service title'),
+      .label('Provider title'),
+    code: Joi.number()
+      .required()
+      .label('Scratch code'),
+    price: Joi.number()
+      .required()
+      .label('Price'),
     description: Joi.string()
       .label('Description'),
     status: Joi.number()
@@ -66,12 +84,12 @@ const userSchema = Joi.object({
   });
 
 app.put(
-  '/service/update',
+  '/service/provider/plan/update',
   validator.body(userSchema, {
     joi: { convert: true, allowUnknown: false }
   }),
   checkToken,
-  update
+  updateProviderPlan
 );
 
 export default app;

@@ -1,23 +1,23 @@
 /*
  * @file: get-list.js
- * @description: It Contain get user list router/api.
+ * @description: It fetch single provider plan router/api.
  * @author: Pankaj Pandey
  */
 import express from 'express';
 import { createValidator } from 'express-joi-validation';
 import Joi from '@hapi/joi';
-import { getSingleService } from '../../../controllers/service';
+import { getSingleProviderPlan } from '../../../controllers/service';
 import { checkToken, decryptDataApi } from '../../../utilities/universal';
 const app = express();
 const validator = createValidator({ passError: true });
 
 /**
  * @swagger
- * /api/v1/service/get:
+ * /api/v1/service/provider/plan/get:
  *  post:
- *   tags: ["Services"]
- *   summary: get service by id api
- *   description: api used to get service by id
+ *   tags: ["Provider Plans"]
+ *   summary: get provider plan by id api
+ *   description: api used to get single provider plan by id
  *   security:
  *    - OAuth2: [admin]   # Use Authorization
  *   parameters:
@@ -27,13 +27,15 @@ const validator = createValidator({ passError: true });
  *        required: true
  *      - in: body
  *        name: service
- *        description: Get single service by its id
+ *        description: Get single provider plan by its id
  *        schema:
  *         type: object
  *         required:
- *          - get single service
+ *          - get single provider plan
  *         properties:
  *           _id:
+ *             type: string
+ *           providerId:
  *             type: string
  *   responses:
  *    '200':
@@ -42,10 +44,22 @@ const validator = createValidator({ passError: true });
  *      description: fail
  */
 
+const planSchema = Joi.object({
+    _id: Joi.string()
+      .required()
+      .label('Plan Id'),
+    providerId: Joi.string()
+      .required()
+      .label('Provider Id')
+});
+
 app.post(
-  '/service/get',
+  '/service/provider/plan/get',
+  validator.body(planSchema, {
+    joi: { convert: true, allowUnknown: false }
+  }),
   checkToken,
-  getSingleService
+  getSingleProviderPlan
 );
 
 export default app;

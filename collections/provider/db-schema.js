@@ -6,12 +6,17 @@
 
 import mongoose from "mongoose";
 
-const serviceSchema = new mongoose.Schema(
+const providerSchema = new mongoose.Schema(
   {
     
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User"
+    },
+
+    serviceId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Service"
     },
 
     title: {
@@ -29,8 +34,18 @@ const serviceSchema = new mongoose.Schema(
       required: true
     },
 
+    plans: [
+      {
+        title: { type: String, default: null },
+        code: { type: Number, default: null },
+        price: { type: Number, default: null },
+        description: { type: String, default: null },
+        status: { type: Number, default: 1 },
+      }
+    ],
+   
     status: {
-      type: Number, 
+      type: Number,
       default: 1
     }
     
@@ -38,4 +53,4 @@ const serviceSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export default serviceSchema;
+export default providerSchema;

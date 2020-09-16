@@ -35,7 +35,7 @@ export default {
   dataAdded: val => `${val} has been successfully added.`,
   dataUpdated: val => `${val} has been successfully updated.`,
   dataDeleted: val => `${val} has been successfully deleted.`,
-  serviceExist: val => `Same ${val} is already exist. Please try with another ${val}!`,
+  dataExist: val => `Same ${val} is already exist. Please try with another ${val}!`,
 
   /************ Transaction **************/
   trasactionMade: val => `${val} has been made successfully.`,

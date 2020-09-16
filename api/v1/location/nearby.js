@@ -7,18 +7,18 @@
 import express from 'express';
 import { createValidator } from 'express-joi-validation';
 import Joi from '@hapi/joi';
-import { update } from '../../../controllers/service'
+import { nearby } from '../../../controllers/location'
 import { checkToken, decryptDataApi } from '../../../utilities/universal';
 const app = express();
 const validator = createValidator({ passError: true });
 
 /**
  * @swagger
- * /api/v1/service/update:
- *  put:
- *   tags: ["Services"]
- *   summary: Update Service
- *   description: api used to update service
+ * /api/v1/location/nearby-locations:
+ *  post:
+ *   tags: ["Location"]
+ *   summary: Get nearby branch and marked location
+ *   description: api used to get nearby branch and marked location
  *   parameters:
  *      - in: header
  *        name: Authorization
@@ -26,24 +26,21 @@ const validator = createValidator({ passError: true });
  *        required: true
  *      - in: body
  *        name: user
- *        description: update service
+ *        description: Get nearby branch and marked location
  *        schema:
  *         type: object
  *         required:
- *          - service update
+ *          - Get nearby branch and marked location params: 
  *         properties:
- *           _id:
- *             type: string
- *             required:
- *           title:
- *             type: string
- *             required:
- *           description:
- *             type: string
- *             required:
- *           status:
- *             type: number
- *             required:
+ *           latitude:
+ *            type: number
+ *            required: 
+ *           longitude:
+ *            type: number
+ *            required: 
+ *           distance:
+ *            type: number
+ *            required: 
  *   responses:
  *    '200':
  *      description: success
@@ -53,25 +50,23 @@ const validator = createValidator({ passError: true });
 
 
 const userSchema = Joi.object({
-    _id: Joi.string()
+    latitude: Joi.number()
       .required()
-      .label('Service Id'),
-    title: Joi.string()
+      .label('Latitude'),
+    longitude: Joi.number()
       .required()
-      .label('Service title'),
-    description: Joi.string()
-      .label('Description'),
-    status: Joi.number()
-      .label('Status')
+      .label('Longitude'),
+    distance: Joi.number()
+      .label('Max distance')
   });
 
-app.put(
-  '/service/update',
+app.post(
+  '/location/nearby-locations',
   validator.body(userSchema, {
     joi: { convert: true, allowUnknown: false }
   }),
   checkToken,
-  update
+  nearby
 );
 
 export default app;

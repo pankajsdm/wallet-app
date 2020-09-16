@@ -1,24 +1,24 @@
 /*
  * @file: add.js
- * @description: Router is used to add transaction
+ * @description: Router is used to add new service
  * @author: Pankaj Pandey
  */
 
 import express from 'express';
 import { createValidator } from 'express-joi-validation';
 import Joi from '@hapi/joi';
-import { add } from '../../../controllers/transaction'
+import { add } from '../../../controllers/service'
 import { checkToken, decryptDataApi } from '../../../utilities/universal';
 const app = express();
 const validator = createValidator({ passError: true });
 
 /**
  * @swagger
- * /api/v1/transaction/add:
+ * /api/v1/service/add:
  *  post:
- *   tags: ["Transaction"]
- *   summary: Add amount to particular user wallet
- *   description: api used to add amount to particular user wallet
+ *   tags: ["Services"]
+ *   summary: Add Service
+ *   description: api used to add new service
  *   parameters:
  *      - in: header
  *        name: Authorization
@@ -26,26 +26,17 @@ const validator = createValidator({ passError: true });
  *        required: true
  *      - in: body
  *        name: user
- *        description: Add amount to particular user wallet
+ *        description: Add new service
  *        schema:
  *         type: object
  *         required:
  *          - user add
  *         properties:
- *           userId:
- *            type: string
- *            required:  
- *           locationId:
- *            type: string
- *            required: 
- *           amount:
- *             type: number
- *             required:
- *           note:
+ *           title:
  *             type: string
  *             required:
- *           type:
- *             type: number
+ *           description:
+ *             type: string
  *             required:
  *   responses:
  *    '200':
@@ -56,25 +47,15 @@ const validator = createValidator({ passError: true });
 
 
 const userSchema = Joi.object({
-    userId: Joi.string()
+    title: Joi.string()
       .required()
-      .label('User Id'),
-    locationId: Joi.string()
-      .required()
-      .label('Location Id'),
-    amount: Joi.number()
-      .required()
-      .label('Amount'),
-    type: Joi.number()
-      .required()
-      .label('Type for add or substract'),
-    note: Joi.string()
-      .required()
-      .label('Note')
+      .label('Service title'),
+    description: Joi.string()
+      .label('Description')
   });
 
 app.post(
-  '/trasaction/add',
+  '/service/add',
   //decryptDataApi,
   validator.body(userSchema, {
     joi: { convert: true, allowUnknown: false }

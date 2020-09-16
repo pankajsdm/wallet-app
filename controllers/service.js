@@ -6,6 +6,7 @@
 
 import { successAction, failAction } from '../utilities/response';
 import * as serviceService from '../services/service';
+import * as providerService from '../services/provider';
 import Message from '../utilities/messages';
 import { ROLE } from '../utilities/constants';
 
@@ -44,9 +45,9 @@ export const update = async (req, res, next) => {
 export const deleteService = async (req, res, next) => {
   if (req.user.role !== ROLE.ADMIN)
     return res.status(400).json(failAction(Message.unauthorizedUser));
-  
+
   try {
-    const payload = req.body;
+    const payload = req.params;
     const data = await serviceService.deleteService(payload);
     res.status(200).json(successAction(data, Message.dataDeleted('Service')));
   } catch (error) {
@@ -54,8 +55,7 @@ export const deleteService = async (req, res, next) => {
   }
 };
 
-
-/**************** Update service ***********/
+/**************** get service list ***********/
 export const getLists = async (req, res, next) => {
   try {
     const payload = req.body;
@@ -79,20 +79,149 @@ export const getSingleService = async (req, res, next) => {
 };
 
 
-/**************** Update service ***********/
+
+/*
+* Start api for service providers
+* add, update, delete and fetch all
+*/
+
+/***************** Get the providers ********************/
+export const getProviders = async (req, res, next) => {
+  try {
+    const payload = req.body;
+    const data = await providerService.getAll(payload);
+    res.status(200).json(successAction(data, Message.success));
+  } catch (error) {
+    res.status(400).json(failAction(error.message));
+  }
+};
+
+/**************** get single provider ***********/
+export const getSingleProvider = async (req, res, next) => {
+  try {
+    const payload = req.body;
+    const data = await providerService.getProviderById(payload);
+    res.status(200).json(successAction(data, Message.success));
+  } catch (error) {
+    res.status(400).json(failAction(error.message));
+  }
+};
+
+/**************** Add provider ***********/
 export const addProvider = async (req, res, next) => {
   if (req.user.role !== ROLE.ADMIN) 
     return res.status(400).json(failAction(Message.unauthorizedUser));
   
   try {
     const payload = req.body;
-    const data = await serviceService.addProvider(payload);
+    payload.userId = req.user.userId;
+    const data = await providerService.add(payload);
     res.status(200).json(successAction(data, Message.dataAdded('Provider')));
   } catch (error) {
     res.status(400).json(failAction(error.message));
   }
 };
 
+/**************** Update provider ***********/
+export const updateProvider = async (req, res, next) => {
+  if (req.user.role !== ROLE.ADMIN)
+    return res.status(400).json(failAction(Message.unauthorizedUser));
+  
+  try {
+    const payload = req.body;
+    const data = await providerService.update(payload);
+    res.status(200).json(successAction(data, Message.dataUpdated('Service')));
+  } catch (error) {
+    res.status(400).json(failAction(error.message));
+  }
+};
 
+/**************** Delete provider ***********/
+export const deleteProvider = async (req, res, next) => {
+  if (req.user.role !== ROLE.ADMIN)
+    return res.status(400).json(failAction(Message.unauthorizedUser));
+  
+  try {
+    const payload = req.params;
+    const data = await providerService.deleteProvider(payload);
+    res.status(200).json(successAction(data, Message.dataDeleted('Provider')));
+  } catch (error) {
+    res.status(400).json(failAction(error.message));
+  }
+};
+
+
+/*
+* Start api for provider plans
+* add, update, delete and fetch all
+*/
+
+/**************** Add plan for particular provider ***********/
+export const addProviderPlan = async (req, res, next) => {
+  if (req.user.role !== ROLE.ADMIN) 
+    return res.status(400).json(failAction(Message.unauthorizedUser));
+  
+  try {
+    const payload = req.body;
+    const data = await providerService.addPlan(payload);
+    res.status(200).json(successAction(data, Message.dataAdded('Provider')));
+  } catch (error) {
+    res.status(400).json(failAction(error.message));
+  }
+};
+
+/**************** Update plan ***********/
+export const updateProviderPlan = async (req, res, next) => {
+  if (req.user.role !== ROLE.ADMIN)
+    return res.status(400).json(failAction(Message.unauthorizedUser));
+  
+  try {
+    const payload = req.body;
+    const data = await providerService.updatePlan(payload);
+    res.status(200).json(successAction(data, Message.dataUpdated('Service')));
+  } catch (error) {
+    res.status(400).json(failAction(error.message));
+  }
+};
+
+/**************** get list of provider plan ***********/
+export const listProviderPlan = async (req, res, next) => {
+  try {
+    const payload = req.body;
+    const data = await providerService.getlistProviderPlan(payload);
+    if(data && data.plans)
+      res.status(200).json(successAction(data.plans, Message.success));
+      
+  } catch (error) {
+    res.status(400).json(failAction(error.message));
+  }
+};
+
+
+/**************** get single plan ***********/
+export const getSingleProviderPlan = async (req, res, next) => {
+  try {
+    const payload = req.body;
+    const data = await providerService.getProviderPlanById(payload);
+    res.status(200).json(successAction( data[0].plans[0], Message.success));
+
+  } catch (error) {
+    res.status(400).json(failAction(error.message));
+  }
+};
+
+/**************** Delete provider plan ***********/
+export const deleteProviderPlan = async (req, res, next) => {
+  if (req.user.role !== ROLE.ADMIN)
+    return res.status(400).json(failAction(Message.unauthorizedUser));
+
+  try {
+    const payload = req.params;
+    const data = await providerService.deleteProviderPlan(payload);
+    res.status(200).json(successAction(data, Message.dataDeleted('Provider')));
+  } catch (error) {
+    res.status(400).json(failAction(error.message));
+  }
+};
 
 

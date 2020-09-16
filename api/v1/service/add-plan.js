@@ -1,24 +1,24 @@
 /*
  * @file: add.js
- * @description: Router is used to add transaction
+ * @description: Router is used to add plan for provider
  * @author: Pankaj Pandey
  */
 
 import express from 'express';
 import { createValidator } from 'express-joi-validation';
 import Joi from '@hapi/joi';
-import { add } from '../../../controllers/transaction'
+import { addProviderPlan } from '../../../controllers/service'
 import { checkToken, decryptDataApi } from '../../../utilities/universal';
 const app = express();
 const validator = createValidator({ passError: true });
 
 /**
  * @swagger
- * /api/v1/transaction/add:
+ * /api/v1/service/provider/plan/add:
  *  post:
- *   tags: ["Transaction"]
- *   summary: Add amount to particular user wallet
- *   description: api used to add amount to particular user wallet
+ *   tags: ["Provider Plans"]
+ *   summary: add plan for service provider
+ *   description: api used to add plan for service provider
  *   parameters:
  *      - in: header
  *        name: Authorization
@@ -26,26 +26,26 @@ const validator = createValidator({ passError: true });
  *        required: true
  *      - in: body
  *        name: user
- *        description: Add amount to particular user wallet
+ *        description: Add plan for service provider
  *        schema:
  *         type: object
  *         required:
- *          - user add
+ *          - Service add
  *         properties:
- *           userId:
- *            type: string
- *            required:  
- *           locationId:
- *            type: string
- *            required: 
- *           amount:
- *             type: number
- *             required:
- *           note:
+ *          providerId:
  *             type: string
  *             required:
- *           type:
+ *          title:
+ *             type: string
+ *             required:
+ *          code:
  *             type: number
+ *             required:
+ *          price:
+ *             type: number
+ *             required:
+ *          description:
+ *             type: string
  *             required:
  *   responses:
  *    '200':
@@ -56,31 +56,29 @@ const validator = createValidator({ passError: true });
 
 
 const userSchema = Joi.object({
-    userId: Joi.string()
+    providerId: Joi.string()
       .required()
-      .label('User Id'),
-    locationId: Joi.string()
+      .label('Provider ID'),
+    title: Joi.string()
       .required()
-      .label('Location Id'),
-    amount: Joi.number()
+      .label('Provider title'),
+    code: Joi.number()
       .required()
-      .label('Amount'),
-    type: Joi.number()
+      .label('Scratch code'),
+    price: Joi.number()
       .required()
-      .label('Type for add or substract'),
-    note: Joi.string()
-      .required()
-      .label('Note')
+      .label('Price'),
+    description: Joi.string()
+      .label('Description')
   });
 
 app.post(
-  '/trasaction/add',
-  //decryptDataApi,
+  '/service/provider/plan/add',
   validator.body(userSchema, {
     joi: { convert: true, allowUnknown: false }
   }),
   checkToken,
-  add
+  addProviderPlan
 );
 
 export default app;
