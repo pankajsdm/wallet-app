@@ -8,6 +8,7 @@ import user from "./v1/user";
 import service from "./v1/service";
 import location from "./v1/location";
 import transaction from "./v1/transaction";
+import card from "./v1/card";
 //import chatbot from "./v1/chatbot";
 //import SocketChat from "./v1/SocketChat";
 //import file from './v1/file';
@@ -18,5 +19,6 @@ export default [
   ...user,
   ...service,
   ...location,
-  ...transaction
+  ...transaction,
+  ...card
 ]

@@ -1,25 +1,22 @@
 /*
  * @file: index.js
- * @description: It Contain function layer for user collection.
+ * @description: It Contain function layer for card collection.
  * @author: Pankaj Pandey
  */
 
 import mongoose from 'mongoose';
 import dbSchema from './db-schema';
 
-
-class ServiceClass {
+class CardClass {
 
   static add(payload) {
-   
-
     return this(payload).save();
   }
 
   static findOneByCondition(condition) {
     return this.findOne({ ...condition, status: true });
   }
-  
+
   static updateById(payload) {
     let updateData = {
       $set: {
@@ -29,12 +26,8 @@ class ServiceClass {
     return this.findByIdAndUpdate(payload._id, updateData, { new: true });
   } 
 
-  static delete(condition) {
-    return this.remove({ ...condition});
-  } 
-
-  static getServiceList(condition, pageNo, limit) {
-     const query = [ 
+  static getCardList(condition, pageNo, limit) {
+    const query = [ 
         {$match: condition},
         {$sort: { createdAt: -1 } },
     ]
@@ -45,16 +38,20 @@ class ServiceClass {
 
     const aggregateQuery = this.aggregate([...query, ...pagination]);
     return {
-      list: aggregateQuery,
-      totalRecords: this.aggregate([...query])
+     list: aggregateQuery,
+     totalRecords: this.aggregate([...query])
     };
   }
 
+  static delete(condition) {
+    return this.remove({ ...condition,});
+  } 
+
 }
- 
-dbSchema.loadClass(ServiceClass);
+
+dbSchema.loadClass(CardClass);
 dbSchema.index( 
-  { title: "text", description:"text", "translation.title": "text", "translation.description": "text" },
+  { title: "text", description:"text" },
   { default_language: "turkish" }
-)
-export default mongoose.model('Service', dbSchema);
+);
+export default mongoose.model('Card', dbSchema);

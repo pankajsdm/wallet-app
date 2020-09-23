@@ -1,24 +1,24 @@
 /*
  * @file: add.js
- * @description: Router is used to add new service
+ * @description: Router is used to add card
  * @author: Pankaj Pandey
  */
 
 import express from 'express';
 import { createValidator } from 'express-joi-validation';
 import Joi from '@hapi/joi';
-import { update } from '../../../controllers/service'
+import { add } from '../../../controllers/card'
 import { checkToken, decryptDataApi } from '../../../utilities/universal';
 const app = express();
 const validator = createValidator({ passError: true });
 
 /**
  * @swagger
- * /api/v1/service/update:
- *  put:
- *   tags: ["Services"]
- *   summary: Update Service
- *   description: api used to update service
+ * /api/v1/card/add:
+ *  post:
+ *   tags: ["Cards"]
+ *   summary: Add virtual card 
+ *   description: api used to add card
  *   parameters:
  *      - in: header
  *        name: Authorization
@@ -26,23 +26,23 @@ const validator = createValidator({ passError: true });
  *        required: true
  *      - in: body
  *        name: user
- *        description: update service
+ *        description: add card
  *        schema:
  *         type: object
  *         required:
- *          - service update
- *         properties:
- *           _id:
- *             type: string
- *             required:
+ *          - virtual card params: 
+ *         properties:  
  *           title:
- *             type: string
- *             required:
+ *            type: string
+ *            required: 
  *           description:
- *             type: string
+ *             type: number
  *             required:
  *           file:
  *             type: object
+ *           feature:
+ *             type: string
+ *             required:
  *           translation:
  *             type: array
  *             items:
@@ -55,9 +55,6 @@ const validator = createValidator({ passError: true });
  *                   type: string
  *                 description:
  *                   type: string
- *           status:
- *             type: number
- *             required:
  *   responses:
  *    '200':
  *      description: success
@@ -67,29 +64,29 @@ const validator = createValidator({ passError: true });
 
 
 const userSchema = Joi.object({
-    _id: Joi.string()
-      .required()
-      .label('Service Id'),
     title: Joi.string()
       .required()
-      .label('Service title'),
+      .label('Title'),
     description: Joi.string()
+      .required()
       .label('Description'),
     file: Joi.object()
       .label('Service Image'),
+    feature: Joi.string()
+      .required()
+      .label('Feature'),
     translation: Joi.string()
       .label('Translation'),
-    status: Joi.number()
-      .label('Status')
   });
 
-app.put(
-  '/service/update',
+app.post(
+  '/card/add',
+  //decryptDataApi,
   validator.body(userSchema, {
     joi: { convert: true, allowUnknown: false }
   }),
   checkToken,
-  update
+  add
 );
 
 export default app;

@@ -38,6 +38,20 @@ const validator = createValidator({ passError: true });
  *           description:
  *             type: string
  *             required:
+ *           file:
+ *             type: object
+ *           translation:
+ *             type: array
+ *             items:
+ *               type: object
+ *               description: required langulage params
+ *               properties:
+ *                 language:
+ *                   type: string
+ *                 title:
+ *                   type: string
+ *                 description:
+ *                   type: string
  *   responses:
  *    '200':
  *      description: success
@@ -51,7 +65,18 @@ const serviceSchema = Joi.object({
       .required()
       .label('Service title'),
     description: Joi.string()
-      .label('Description')
+      .label('Description'),
+    file: Joi.object()
+      .label('Service Image'),
+    translation: Joi.string()
+      .label('Translation'),
+    /* translation: Joi.array().items(
+      Joi.object({
+        language: Joi.string().required(),
+        title: Joi.string().required(),
+        description: Joi.string().required(),
+      })
+    ) */
   });
 
 app.post(

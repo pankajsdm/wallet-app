@@ -1,26 +1,26 @@
 /*
  * @file: page.js
- * @description: It contain function layer for service controller.
+ * @description: It contain function layer for card controller.
  * @author: Pankaj Pandey
  */
 
 
-import User from '../collections/user';
-import Service from '../collections/service';
+
 import Message from '../utilities/messages';
-import { LIMIT } from '../utilities/constants';
+import Card from '../collections/card';
 import { generateSlug } from '../utilities/universal';
 import { uploadFormDataFile, uploadDocument } from '../utilities/upload';
 
-/**************** Save Page **********/
-export const saveService = async payload => {
+/********** Add card **********/
+export const add = async payload => {
+ 
   payload.slug = generateSlug(payload.title);
-  if (await Service.findOneByCondition({ slug: payload.slug}))
-    throw new Error(Message.dataExist('service'));
+  if (await Card.findOneByCondition({ slug: payload.slug}))
+    throw new Error(Message.dataExist('Card'));
 
-  if(payload.files){
+    if(payload.files){
       const fileData = payload.files.file.data;
-      const folder = `images/service`;
+      const folder = `images/card`;
       const fileName = `${Date.now()}-${payload.files.file.name}`;
       const imageUploadStatus = await uploadFormDataFile(fileData, folder, fileName);  
       if(imageUploadStatus){
@@ -30,7 +30,7 @@ export const saveService = async payload => {
           thumbnail: `${payload.appUrl}/${folder}/thumbnail/${fileName}`,
         };
         payload.image = imgObject;
-        return await Service.add(payload);
+        return await Card.add(payload);
       }
     }else{
       const imgObject = {
@@ -39,20 +39,21 @@ export const saveService = async payload => {
         thumbnail: `${payload.appUrl}/images/dummy/thumbnail/service.png`,
       };
       payload.image = imgObject;
-      return await Service.add(payload);
+      return await Card.add(payload);
     }
+
 };
 
 
-/********** Save Page **********/
-export const updateService = async payload => {
+/********** Update card **********/
+export const update = async payload => {
   payload.slug = generateSlug(payload.title);
-  if (await Service.findOneByCondition({ _id: { $ne: payload._id }, slug: payload.slug}))
-    throw new Error(Message.dataExist('service'));
+  if (await Card.findOneByCondition({ _id: { $ne: payload._id }, slug: payload.slug}))
+    throw new Error(Message.dataExist('Card'));
 
   if(payload.files){
       const fileData = payload.files.file.data;
-      const folder = `images/service`;
+      const folder = `images/card`;
       const fileName = `${Date.now()}-${payload.files.file.name}`;
       const imageUploadStatus = await uploadFormDataFile(fileData, folder, fileName);  
       if(imageUploadStatus){
@@ -62,22 +63,16 @@ export const updateService = async payload => {
           thumbnail: `${payload.appUrl}/${folder}/thumbnail/${fileName}`,
         };
         payload.image = imgObject;
-        return await Service.updateById(payload);
+        return await Card.updateById(payload);
       }
   }else{
-    const getService = await Service.findOneByCondition({ _id: payload._id});
-    payload.image = getService.image
-    return await Service.updateById(payload);
+    const getCard = await Card.findOneByCondition({ _id: payload._id});
+    payload.image = getCard.image;
+    return await Card.updateById(payload);
   }
 };
 
-/********** Delete Page **********/
-export const deleteService = async payload => {
-  return await Service.delete({_id: payload._id});
-};
-
-
-/********* get user list *********/
+/********* Get cards list *********/
 export const getAll = async payload => {
   let query = { status: 1 };
   if (payload.search) {
@@ -91,7 +86,7 @@ export const getAll = async payload => {
       ]
     };
   }
-  const data = await Service.getServiceList(query, payload['page'], payload['limit']);
+  const data = await Card.getCardList(query, payload['page'], payload['limit']);
   const totalRecords = await data.totalRecords;
   return {
     list: await data.list,
@@ -100,9 +95,14 @@ export const getAll = async payload => {
   };
 };
 
-
-/********* get user list *********/
-export const getServiceById = async payload => {
+/********* Get card by id *********/
+export const getCardById = async payload => {
   const conditionObj = {_id : payload._id };
-  return await Service.findOneByCondition(conditionObj);
+  return await Card.findOneByCondition(conditionObj);
+};
+
+
+/********** Delete Page **********/
+export const deleteService = async payload => {
+  return await Card.delete({_id: payload._id});
 };

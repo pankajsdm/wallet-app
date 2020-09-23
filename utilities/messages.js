@@ -36,6 +36,7 @@ export default {
   dataUpdated: val => `${val} has been successfully updated.`,
   dataDeleted: val => `${val} has been successfully deleted.`,
   dataExist: val => `Same ${val} is already exist. Please try with another ${val}!`,
+  registrationOtp: otp => `${otp} is registration verification otp for Bestpay app. Do not share it with anyone.`,
 
   /************ Transaction **************/
   trasactionMade: val => `${val} has been made successfully.`,

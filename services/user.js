@@ -7,16 +7,12 @@
 import config from 'config';
 import User from '../collections/user';
 import { generateOTP } from '../utilities/universal';
-import moment from "moment";
 import path from 'path';
-import momentZone from "moment-timezone";
 import Message from '../utilities/messages';
 import { uploadFormDataFile, uploadDocument } from '../utilities/upload';
 import { encryptpassword, generateToken, generateRandom, uploadImagebyBase64 } from '../utilities/universal';
 import * as Mail from '../utilities/mail';
 import { ROLE, LIMIT, RADIUS, TWILIO } from '../utilities/constants';
-//import Notifications from "../push/notification";
-import { NOTIFICATION_CATEGORY, NOTIFICATION_MESSAGE } from "../utilities/constants";
 const client = require('twilio')(TWILIO.accountSid, TWILIO.authToken);
 const { webUrl } = config.get('app');
 const fs = require("fs"); 
@@ -25,7 +21,7 @@ var url = require('url');
 
 function sendOtp(otp, number){
   client.messages.create({
-    body: otp +' is registration verification otp for Bestpay app. Do not share it with anyone.',
+    body: Message.registrationOtp(otp),
     from: TWILIO.number,
     to: number
   });
@@ -93,14 +89,14 @@ export const otpVerification = async req => {
 export const updateUserInfo = async payload => {
   if(payload.files){
     const fileData = payload.files.file.data;
-    const folder = `images/profilepic/${payload.userId}`;
+    const folder = `images/user/${payload.userId}`;
     const fileName = `${Date.now()}-${payload.files.file.name}`;
     const imageUploadStatus = await uploadFormDataFile(fileData, folder, fileName);  
     if(imageUploadStatus){
       const imgObject = {
           filename: fileName,
-          src: `${payload.appUrl}/images/${folder}/original/${fileName}`,
-          thumbnail: `${payload.appUrl}/images/${folder}/thumbnail/${fileName}`,
+          src: `${payload.appUrl}/${folder}/original/${fileName}`,
+          thumbnail: `${payload.appUrl}/${folder}/thumbnail/${fileName}`,
         };
         payload.profileImage = imgObject;
         return await User.updateUser(payload);

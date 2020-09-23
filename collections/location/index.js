@@ -24,5 +24,5 @@ class LocationClass {
 }
 
 dbSchema.loadClass(LocationClass);
-
+dbSchema.index({ location: "2dsphere"});
 export default mongoose.model('Location', dbSchema);

@@ -17,7 +17,10 @@ export const add = async (req, res, next) => {
   
   try {
     const payload = req.body;
+    payload.files = req.files;
+    payload.appUrl = `${req.protocol}://${req.headers.host}`;
     payload.userId = req.user.userId;
+    payload.translation = JSON.parse(payload.translation);
     const data = await serviceService.saveService(payload);
     res.status(200).json(successAction(data, Message.dataAdded('Service')));
   } catch (error) {
@@ -33,6 +36,10 @@ export const update = async (req, res, next) => {
   
   try {
     const payload = req.body;
+    payload.files = req.files;
+    payload.appUrl = `${req.protocol}://${req.headers.host}`;
+    payload.userId = req.user.userId;
+    payload.translation = JSON.parse(payload.translation);
     const data = await serviceService.updateService(payload);
     res.status(200).json(successAction(data, Message.dataUpdated('Service')));
   } catch (error) {
@@ -113,8 +120,13 @@ export const addProvider = async (req, res, next) => {
     return res.status(400).json(failAction(Message.unauthorizedUser));
   
   try {
+
     const payload = req.body;
+    payload.files = req.files;
+    payload.appUrl = `${req.protocol}://${req.headers.host}`;
     payload.userId = req.user.userId;
+    payload.translation = JSON.parse(payload.translation);
+
     const data = await providerService.add(payload);
     res.status(200).json(successAction(data, Message.dataAdded('Provider')));
   } catch (error) {
@@ -129,6 +141,10 @@ export const updateProvider = async (req, res, next) => {
   
   try {
     const payload = req.body;
+    payload.files = req.files;
+    payload.appUrl = `${req.protocol}://${req.headers.host}`;
+    payload.userId = req.user.userId;
+    payload.translation = JSON.parse(payload.translation);
     const data = await providerService.update(payload);
     res.status(200).json(successAction(data, Message.dataUpdated('Service')));
   } catch (error) {
@@ -189,9 +205,8 @@ export const listProviderPlan = async (req, res, next) => {
   try {
     const payload = req.body;
     const data = await providerService.getlistProviderPlan(payload);
-    if(data && data.plans)
-      res.status(200).json(successAction(data.plans, Message.success));
-      
+    data.providerId = payload.providerId;
+    res.status(200).json(successAction(data, Message.success));
   } catch (error) {
     res.status(400).json(failAction(error.message));
   }
@@ -201,9 +216,15 @@ export const listProviderPlan = async (req, res, next) => {
 /**************** get single plan ***********/
 export const getSingleProviderPlan = async (req, res, next) => {
   try {
+    const responseObject = {};
     const payload = req.body;
     const data = await providerService.getProviderPlanById(payload);
-    res.status(200).json(successAction( data[0].plans[0], Message.success));
+    responseObject.providerId = payload.providerId;
+    if(data[0].user)
+      responseObject.walletAmount = data[0].user[0].wallet.amount;
+
+    responseObject.plans = data[0].plans[0];
+    res.status(200).json(successAction( responseObject, Message.success));
 
   } catch (error) {
     res.status(400).json(failAction(error.message));

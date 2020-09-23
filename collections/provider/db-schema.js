@@ -34,6 +34,12 @@ const providerSchema = new mongoose.Schema(
       required: true
     },
 
+    image: { 
+      filename: { type: String, default: null },
+      src: { type: String, default: null },
+      thumbnail: { type: String, default: null }
+    },
+
     plans: [
       {
         title: { type: String, default: null },
@@ -41,7 +47,40 @@ const providerSchema = new mongoose.Schema(
         price: { type: Number, default: null },
         description: { type: String, default: null },
         status: { type: Number, default: 1 },
+        translation: [
+          {
+            language: { 
+              type: String,
+              default: '' 
+            },
+            title: { 
+              type: String, 
+              default: '' 
+            },
+            description: { 
+              type: String, 
+              default: '' 
+            }
+          },
+        ],
       }
+    ],
+
+    translation: [
+      {
+        language: { 
+          type: String,
+          default: '' 
+        },
+        title: { 
+          type: String, 
+          default: '' 
+        },
+        description: { 
+          type: String, 
+          default: '' 
+        }
+      },
     ],
    
     status: {

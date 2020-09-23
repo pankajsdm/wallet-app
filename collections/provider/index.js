@@ -12,8 +12,9 @@ class ProviderClass {
   static getProviderList(condition, pageNo, limit) {
 
     const query = [ 
-       {$match: condition},
-       {$sort: { createdAt: -1 } },
+      { $match: condition},
+      { $project: {plans: 0}},
+      { $sort: { createdAt: -1 } },
    ]
    const pagination = [
      { $skip: pageNo ? (pageNo - 1) * limit : 0 },
@@ -71,6 +72,38 @@ class ProviderClass {
     return this.findOne({ ...condition, status: true });
   }
 
+  static findPlanByProvider(condition, pageNo, limit) {
+
+    const query = [ 
+      
+      { $unwind: "$plans" },
+      { $match: condition },
+      { 
+        $project: {
+          "_id": "$plans._id",
+          "title":"$plans.title",
+          "price": "$plans.price",
+          "code": "$plans.code",
+          "description": "$plans.description",
+          "translation": "$plans.translation"
+        }
+      },
+      { $sort: { createdAt: -1 } },
+   ]
+   const pagination = [
+     { $skip: pageNo ? (pageNo - 1) * limit : 0 },
+     { $limit: limit }
+   ];
+
+   const aggregateQuery = this.aggregate([...query, ...pagination]);
+   return {
+     plans: aggregateQuery,
+     totalRecords: this.aggregate([...query])
+   };
+
+  }
+
+
   static findPlanById(payload) {
     const match = { _id : mongoose.Types.ObjectId(payload.providerId) };
     const filteredProject = { 
@@ -85,8 +118,19 @@ class ProviderClass {
       { 
         $match: match 
       },
+      {
+        $lookup: {
+            from: 'users',
+            localField: "userId",
+            foreignField: "_id",
+            as: "user"
+        }    
+      },
       { 
-        $project: { plans: filteredProject}
+        $project: { 
+          user: {"wallet.amount":1},
+          plans: filteredProject
+        }
       }
     ]
     return this.aggregate(queryCondition);
@@ -109,5 +153,8 @@ class ProviderClass {
 }
 
 dbSchema.loadClass(ProviderClass);
-
+dbSchema.index( 
+  { title: "text", description:"text", "translation.title": "text", "translation.description": "text" },
+  { default_language: "turkish" }
+);
 export default mongoose.model('Provider', dbSchema);

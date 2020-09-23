@@ -21,7 +21,7 @@ export const LIMIT = {
 
 export const TWILIO = {
   accountSid : 'AC73a69b8ea8cca6890e17fe0d104f63a7',
-  authToken  : '3ed3934d571c418a1b9c5051b2ff9017',
+  authToken  : '88e8e8943cd1685c32af41c47f51a85d',
   number: '+13345440726'
 }
 

@@ -1,23 +1,23 @@
 /*
- * @file: get-list.js
- * @description: It fetch  list of  provider plan router/api.
+ * @file: list-services.js
+ * @description: It Contain get service list router/api.
  * @author: Pankaj Pandey
  */
 import express from 'express';
 import { createValidator } from 'express-joi-validation';
 import Joi from '@hapi/joi';
-import { listProviderPlan } from '../../../controllers/service';
-import { checkToken, decryptDataApi } from '../../../utilities/universal';
+import { getLists } from '../../../controllers/card';
+import { checkToken } from '../../../utilities/universal';
 const app = express();
 const validator = createValidator({ passError: true });
 
 /**
  * @swagger
- * /api/v1/service/provider/plan/lists:
+ * /api/v1/card/lists:
  *  post:
- *   tags: ["Provider Plans"]
- *   summary: get  list of provider plan  api
- *   description: api used to get list of provider plan by id
+ *   tags: ["Cards"]
+ *   summary: Getting the card list
+ *   description: api used to get list of the card
  *   security:
  *    - OAuth2: [admin]   # Use Authorization
  *   parameters:
@@ -26,15 +26,11 @@ const validator = createValidator({ passError: true });
  *        type: string
  *        required: true
  *      - in: body
- *        name: service
- *        description: Get  list of provider plan
+ *        name: user
+ *        description: The card filter list.
  *        schema:
  *         type: object
- *         required:
- *          - get list of provider plan params
  *         properties:
- *           providerId:
- *             type: string
  *           search:
  *             type: string
  *           page:
@@ -49,11 +45,7 @@ const validator = createValidator({ passError: true });
  *    '400':
  *      description: fail
  */
-
-const planSchema = Joi.object({
-  providerId: Joi.string()
-    .required()
-    .label('Provider Id'),
+const serviceSchema = Joi.object({
   search: Joi.string()
     .optional()
     .allow('')
@@ -63,16 +55,17 @@ const planSchema = Joi.object({
     .label('Page Number'),
   limit: Joi.number()
     .required()
-    .label('Limit')
+    .label('Limit'),
 });
 
+
 app.post(
-  '/service/provider/plan/lists',
-  validator.body(planSchema, {
+  '/card/lists',
+  validator.body(serviceSchema, {
     joi: { convert: true, allowUnknown: false }
   }),
   checkToken,
-  listProviderPlan
+  getLists
 );
 
 export default app;

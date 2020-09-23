@@ -1,37 +1,32 @@
 /*
  * @file: db-schema.js
- * @description: It contain db schema for service collection.
+ * @description: It contain db schema for card collection.
  * @author: Pankaj Pandey
  */
 
 import mongoose from "mongoose";
 
-const serviceSchema = new mongoose.Schema(
+const cardSchema = new mongoose.Schema(
   {
-    
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User"
     },
-
     title: {
       type: String,
       required: true
     },
-
     slug: {
       type: String,
-      default: null
+      required: true
     },
-
     description: {
       type: String,
       required: true
     },
-
-    status: {
-      type: Number, 
-      default: 1
+    feature: {
+      type: String,
+      required: true
     },
 
     image: { 
@@ -56,9 +51,19 @@ const serviceSchema = new mongoose.Schema(
         }
       },
     ],
+   
+    /*
+    * Transaction status
+    * 1 => active, 2 => Inactive
+    */
+    status: {
+      type: Number,
+      default: 1
+    }
     
   },
   { timestamps: true }
 );
 
-export default serviceSchema;
+
+export default cardSchema;

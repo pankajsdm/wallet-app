@@ -5,13 +5,12 @@
  */
 
 
-import User from '../collections/user';
-import Service from '../collections/service';
 import Provider from '../collections/provider';
 import Message from '../utilities/messages';
 import { LIMIT } from '../utilities/constants';
 import { generateSlug } from '../utilities/universal';
 import mongoose from 'mongoose';
+import { uploadFormDataFile, uploadDocument } from '../utilities/upload';
 
 /********* Add provider *********/
 export const add = async payload => {
@@ -19,7 +18,29 @@ export const add = async payload => {
   if (await Provider.findOneByCondition({ slug: payload.slug}))
     throw new Error(Message.dataExist('provider'));
 
-  return await Provider.add(payload); 
+    if(payload.files){
+      const fileData = payload.files.file.data;
+      const folder = `images/provider`;
+      const fileName = `${Date.now()}-${payload.files.file.name}`;
+      const imageUploadStatus = await uploadFormDataFile(fileData, folder, fileName);  
+      if(imageUploadStatus){
+        const imgObject = {
+          filename: fileName,
+          src: `${payload.appUrl}/${folder}/original/${fileName}`,
+          thumbnail: `${payload.appUrl}/${folder}/thumbnail/${fileName}`,
+        };
+        payload.image = imgObject;
+        return await Provider.add(payload);
+      }
+    }else{
+      const imgObject = {
+        filename: 'service.png',
+        src: `${payload.appUrl}/images/dummy/service.png`,
+        thumbnail: `${payload.appUrl}/images/dummy/thumbnail/service.png`,
+      };
+      payload.image = imgObject;
+      return await Provider.add(payload);
+    } 
 };
 
 /********** Update  provider **********/
@@ -28,7 +49,25 @@ export const update = async payload => {
   if (await Provider.findOneByCondition({ _id: { $ne: payload._id }, slug: payload.slug}))
     throw new Error(Message.dataExist('provider'));
 
-  return await Provider.updateById(payload);
+  if(payload.files){
+    const fileData = payload.files.file.data;
+    const folder = `images/provider`;
+    const fileName = `${Date.now()}-${payload.files.file.name}`;
+    const imageUploadStatus = await uploadFormDataFile(fileData, folder, fileName);  
+    if(imageUploadStatus){
+      const imgObject = {
+        filename: fileName,
+        src: `${payload.appUrl}/${folder}/original/${fileName}`,
+        thumbnail: `${payload.appUrl}/${folder}/thumbnail/${fileName}`,
+      };
+      payload.image = imgObject;
+      return await Provider.updateById(payload);
+    }
+  }else{
+    const getProvider = await Provider.findOneByCondition({ _id: payload._id});
+    payload.image = getProvider.image
+    return await Provider.updateById(payload);
+  }
 };
 
 /********** Delete provider **********/
@@ -46,15 +85,32 @@ export const getProviderById = async payload => {
 
 /********* get provider by Id *********/
 export const getlistProviderPlan = async payload => {
-  const conditionObj = { serviceId : payload.serviceId };
-  return await Provider.findOneByCondition(conditionObj);
+  let query = { status: 1, _id: mongoose.Types.ObjectId(payload.providerId)};
+  if(payload.search){
+    const regex = new RegExp(`${payload.search}`, 'i');
+    query = {
+      ...query,
+      $or: [
+        { "plans.title": { $regex: regex } },
+        { "plans.description": { $regex: regex } },
+      ]
+    };
+  }
+  const data = await Provider.findPlanByProvider(query, payload['page'], payload['limit']);
+  const totalRecords = await data.totalRecords;
+  return {
+    plans: await data.plans,
+    total: totalRecords.length,
+    limit: (payload['limit'])?payload['limit']:LIMIT.SERVICES
+  };
 };
 
 
 
 /********* get provider by Id *********/
 export const getProviderPlanById = async payload => {
-  return await Provider.findPlanById(payload);
+  const getPlan =  await Provider.findPlanById(payload);
+  return getPlan;
 };
 
 /********* get all provider list *********/
