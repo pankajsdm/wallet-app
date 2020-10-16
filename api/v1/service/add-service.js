@@ -8,7 +8,7 @@ import express from 'express';
 import { createValidator } from 'express-joi-validation';
 import Joi from '@hapi/joi';
 import { add } from '../../../controllers/service'
-import { checkToken, decryptDataApi } from '../../../utilities/universal';
+import { checkToken, isAuthorizedUserForAction } from '../../../utilities/universal';
 const app = express();
 const validator = createValidator({ passError: true });
 
@@ -24,34 +24,19 @@ const validator = createValidator({ passError: true });
  *        name: Authorization
  *        type: string
  *        required: true
- *      - in: body
- *        name: user
- *        description: Add new service
- *        schema:
- *         type: object
- *         required:
- *          - user add
- *         properties:
- *           title:
- *             type: string
- *             required:
- *           description:
- *             type: string
- *             required:
- *           file:
- *             type: object
- *           translation:
- *             type: array
- *             items:
- *               type: object
- *               description: required langulage params
- *               properties:
- *                 language:
- *                   type: string
- *                 title:
- *                   type: string
- *                 description:
- *                   type: string
+ *      - in: formData
+ *        name: title
+ *        type: string
+ *        required: true
+ *      - in: formData
+ *        name: description
+ *        type: string
+ *      - in: formData
+ *        name: file
+ *        type: file
+ *      - in: formData
+ *        name: translation
+ *        type: string
  *   responses:
  *    '200':
  *      description: success
@@ -66,26 +51,19 @@ const serviceSchema = Joi.object({
       .label('Service title'),
     description: Joi.string()
       .label('Description'),
-    file: Joi.object()
+    file: Joi.string()
       .label('Service Image'),
     translation: Joi.string()
       .label('Translation'),
-    /* translation: Joi.array().items(
-      Joi.object({
-        language: Joi.string().required(),
-        title: Joi.string().required(),
-        description: Joi.string().required(),
-      })
-    ) */
   });
 
 app.post(
   '/service/add',
-  //decryptDataApi,
   validator.body(serviceSchema, {
     joi: { convert: true, allowUnknown: false }
   }),
   checkToken,
+  isAuthorizedUserForAction,
   add
 );
 

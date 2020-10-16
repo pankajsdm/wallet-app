@@ -14,10 +14,10 @@ const app = express();
 const validator = createValidator({ passError: true });
 
 /**
- * @swagger
+ * 
  * /api/v1/page:
  *  post:
- *   tags: ["page"]
+ *   tags: ["Pages"]
  *   summary: create page api
  *   description: api used to add page <br/><b>Note:-</b><br/>Page type should be one of about-us, contact-us, privacy-policy, terms-conditions
  *   security:

@@ -6,8 +6,10 @@
 
 import config from 'config';
 import User from '../collections/user';
+import Token from '../collections/token';
 import { generateOTP } from '../utilities/universal';
 import path from 'path';
+import mongoose from 'mongoose';
 import Message from '../utilities/messages';
 import { uploadFormDataFile, uploadDocument } from '../utilities/upload';
 import { encryptpassword, generateToken, generateRandom, uploadImagebyBase64 } from '../utilities/universal';
@@ -26,6 +28,45 @@ function sendOtp(otp, number){
     to: number
   });
 }
+
+/**************** service to create user by admin only  **********/
+export const createUser = async payload => {
+
+  if (await User.findOneByCondition({ email: payload.email}))
+    throw new Error(Message.dataExist('Email'));
+
+  if (await User.findOneByCondition({ username: payload.username}))
+    throw new Error(Message.dataExist('Username'));
+
+    payload.status = 1;
+    payload.password = encryptpassword(payload.password);
+
+    if(payload.files){
+        const fileData = payload.files.file.data;
+        const folder = `images/user`;
+        const fileName = `${Date.now()}-${payload.files.file.name}`;
+        const imageUploadStatus = await uploadFormDataFile(fileData, folder, fileName);  
+        if(imageUploadStatus){
+          const imgObject = {
+            filename: fileName,
+            src: `${payload.appUrl}/${folder}/original/${fileName}`,
+            thumbnail: `${payload.appUrl}/${folder}/thumbnail/${fileName}`,
+          };
+          
+          payload.profileImage = imgObject;
+          return await User.saveUser(payload);
+        }
+      }else{
+        const imgObject = {
+          filename: 'service.png',
+          src: `${payload.appUrl}/images/dummy/service.png`,
+          thumbnail: `${payload.appUrl}/images/dummy/thumbnail/service.png`,
+        };
+        payload.image = imgObject;
+        return await User.saveUser(payload);
+      }
+};
+
 
 /********** Save user **********/
 export const save = async req => {
@@ -52,8 +93,8 @@ export const save = async req => {
   });
   const result = await Mail.htmlFromatWithObject(
     {
-      data: { username: `${payload.firstName} ${payload.lastName}` ,
-      link: `${webUrl}/api/v1/confirmation/${token}`}
+      data: { username: `${payload.username}` ,
+      link: `${webUrl}/account/confirmation/${token}`}
     },
     "user-account"
   );
@@ -69,7 +110,8 @@ export const save = async req => {
     else
       console.log("-----@@----- Response at sending verify mail to user -----@@-----",res);
   });
-  await User.onLoginDone(userData._id, token);
+
+  await Token.saveToken(userData._id, token);
   return { token: token}
 };
 
@@ -84,12 +126,32 @@ export const otpVerification = async req => {
   return userData;
 }
 
+/********* Update admin  *********/
+export const updateAdminInfo = async payload => {
+  if(payload.files){
+    const fileData = payload.files.file.data;
+    const folder = `images/user`;
+    const fileName = `${Date.now()}-${payload.files.file.name}`;
+    const imageUploadStatus = await uploadFormDataFile(fileData, folder, fileName);  
+    if(imageUploadStatus){
+      const imgObject = {
+          filename: fileName,
+          src: `${payload.appUrl}/${folder}/original/${fileName}`,
+          thumbnail: `${payload.appUrl}/${folder}/thumbnail/${fileName}`,
+        };
+        payload.profileImage = imgObject;
+        return await User.updateUser(payload);
+    }
+  }
+  return await User.updateUser(payload);
+};
+
 
 /********* Update user info *********/
 export const updateUserInfo = async payload => {
   if(payload.files){
     const fileData = payload.files.file.data;
-    const folder = `images/user/${payload.userId}`;
+    const folder = `images/user`;
     const fileName = `${Date.now()}-${payload.files.file.name}`;
     const imageUploadStatus = await uploadFormDataFile(fileData, folder, fileName);  
     if(imageUploadStatus){
@@ -117,7 +179,7 @@ export const updateUserKYC = async payload => {
           kyc: {
             type: payload.type,
             fileName: payload.files.file.name,
-            fileUrl: `${payload.appUrl}/documents/${folder}/${payload.files.file.name}`,
+            fileUrl: `${payload.appUrl}/${folder}/${payload.files.file.name}`,
             filePath: path.join(__uploadDir, `${folder}/${payload.files.file.name}`)
           }
         };
@@ -179,32 +241,38 @@ export const getAccountLinkService = async payload => {
 
 /********** Login users **********/
 export const onLogin = async payload => {
-  const role = payload['role'] ? [payload['role']]: [ROLE.CENTRALOFFICEUSER, ROLE.MARKEDLOCATIONUSER];
   const conditionObj = {};
   conditionObj.email = payload.email.toLowerCase();
   conditionObj.password = encryptpassword(payload.password);
-  conditionObj.role = { $in: role };
+
   const userData = await User.findOneByCondition(conditionObj);
 
-  if (!userData) throw new Error(Message.invalidCredentials);
-  if(userData.role === 2){
-    if (userData.email_verified === 1 && userData.status === 0) 
-      throw new Error("doctorProfileVerificationPending");
-  }
-  if (userData.email_verified === 0) throw new Error(Message.accountNotActivated);
+  if (!userData) 
+    throw new Error(Message.invalidCredentials);
+
+  /* if(!userData.email_verified) 
+    throw new Error(Message.emailNotVerified); */
+
+  if(userData.status === 0)
+    throw new Error(Message.userNotActivated);
+  
+
   let loginToken = generateToken({
     when: new Date(),
     role: userData.role,
     lastLogin: userData.lastLogin,
     userId: userData._id
   });
-  const data = await User.onLoginDone(userData._id, loginToken, payload);
-  return {
+
+  await Token.saveToken(userData._id, loginToken, payload);
+  const data = await User.onLoginDone(userData._id, payload);
+  
+ return {
     _id: data._id,
     firstName: data.firstName,
     lastName: data.lastName,
     email: data.email,
-    loginToken: data.loginToken[data.loginToken.length - 1].token,
+    loginToken: loginToken,
     lastLogin: data.lastLogin,
     role: data.role,
     uid: data.uid,
@@ -316,20 +384,16 @@ export const updateDevTok = async req => {
 
 /********* get user list *********/
 export const getUsers = async payload => {
-  let query = { role: { $ne: ROLE.ADMIN }, email_verified: 1 };
-  /* const radius = RADIUS.VALUE;
-  const lng =  payload['location'].coordinates[0];
-  const lat = payload['location'].coordinates[1];
-  if(lat && lng){
-     query = {...query, "location.coordinates":{
-        $geoWithin: {
-            $centerSphere: [
-                [lng, lat],
-                radius / 3963.2
-            ]
-        }
-        }};
-  } */
+  let query = { status: { $ne: 2 } };
+
+  if(payload.role){
+    var filterRole = payload.role.filter(role => role===ROLE.ADMIN);
+    if(filterRole.length>0)
+      throw new Error(Message.adminNotAccessed);
+    else
+      query.role = { $in: payload.role }
+  }
+
   if (payload['search']) {
     const regex = new RegExp(`${payload['search']}`, 'i');
     query = {
@@ -337,38 +401,25 @@ export const getUsers = async payload => {
       $or: [
         { firstName: { $regex: regex } },
         { lastName: { $regex: regex } },
-        { email: { $regex: regex } },
-        { address: { $regex: regex } }
+        { email: { $regex: regex } }
       ]
     };
   }
 
-  if (payload['status']) {
-    query = { ...query, status: payload['status'] };
-  }
-  if (payload['paymentInfo']) {
-    query = { ...query, paymentInfo: payload['paymentInfo'] };
-  }
-  if (payload['role']) {
-    query = { ...query, role: payload['role'] };
-  }
-  if (payload['dateRange']) {
-    console.log(payload['dateRange']['fromDate']);
-    query = { ...query, $and:[{createdAt:{$gte:new Date(payload['dateRange']['fromDate'])}},{createdAt:{$lte:new Date(payload['dateRange']['toDate'])}}] };
-  }
-  const data = await User.findUsersList(query, payload['page'], payload['speciality']);
+  const data = await User.findUsersList(query, payload['page'], payload['limit']);
   const totalRecords = await data.totalRecords;
   return {
     list: await data.list,
     total: totalRecords.length,
     limit: LIMIT.USERS
   };
- 
 };
 /********** Send forgot password link in email ************/
 export const forgotPasswordLink = async email => {
   const user = await User.findOneByCondition({ email });
-  if (!user) throw new Error(Message.emailNotExists);
+  if (!user) 
+    throw new Error(Message.emailNotExists);
+    
   let token = generateToken({
     when: new Date(),
     role: user.role,
@@ -378,7 +429,7 @@ export const forgotPasswordLink = async email => {
   const result = await Mail.htmlFromatWithObject(
     {
       data: {
-        username: `${user.firstName} ${user.lastName}`, link: `${webUrl}/auth/reset-password/${token}`
+        username: `${user.username}`, link: `${webUrl}/auth/reset-password/${token}`
       }
     },
     'forgot-password'
@@ -397,8 +448,16 @@ export const forgotPasswordLink = async email => {
 };
 /********** Send forgot password link in email ************/
 export const changePassword = async payload => {
-  payload.password = encryptpassword(payload.password);
-  return User.updateUser(payload);
+
+  const password = encryptpassword(payload.oldPassword);
+  const conditionObj = {_id: payload.userId, password: password};
+  const userData = await User.findOneByCondition(conditionObj);
+  if(userData){
+    payload.password = encryptpassword(payload.currentPassword);
+    return User.updateUser(payload);
+  }
+  else
+    return false;
 };
 
 /************ get user detail ***************/
@@ -406,28 +465,13 @@ export const userDetail = async (userId) => {
   return await User.findOneByCondition({ _id: userId });
 };
 
-export const getFilteredDoctors = async payload => {
-  let query = { role: 2, status : 1, email_verified: 1, paymentInfo: 1};
-  if (payload['name'] || payload['uid']) {
-    const name = payload['name'] ? payload['name'].toLowerCase(): "";
-    const uid = payload['uid'];
-    query = {
-      ...query,
-      $or: [
-        { firstName: name },
-        { lastName: name },
-        { uid: uid }
-      ]
-    };
-  }
-  const data = User.findByCondition(query);
-  return {
-    list: await data
-      .select({ __v: 0, loginToken: 0, updatedAt: 0 })
-      .sort([['createdAt', -1]]),
-  };
 
-}
+
+/********** Delete user **********/
+export const deleteUser = async payload => {
+  const deletedObject = {userId: payload._id, status: 2}
+  return await User.updateUser(deletedObject);
+};
 
 export const activeDeactive = async payload => {
   const user = await User.updateUser(payload);

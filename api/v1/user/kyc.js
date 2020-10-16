@@ -16,7 +16,7 @@ const validator = createValidator({ passError: true });
  * @swagger
  * /api/v1/user/kyc:
  *  post:
- *   tags: ["user"]
+ *   tags: ["Users"]
  *   summary: upload the document for kyc
  *   description: api used to upload the document for kyc
  *   security:
@@ -26,21 +26,14 @@ const validator = createValidator({ passError: true });
  *        name: Authorization
  *        type: string
  *        required: true
- *      - in: body
- *        name: user
- *        description: update kyc information.
- *        schema:
- *         type: object
- *         required:
- *          - user add
- *         properties:
- *           kyc:
- *             type: string
- *             required:
- *           file:
- *             type: object
- *             required:
- *             
+ *      - in: formData
+ *        name: type
+ *        type: string
+ *        required: true
+ *      - in: formData
+ *        name: file
+ *        type: file
+ *        required: true
  *   responses:
  *    '200':
  *      description: success
@@ -59,7 +52,6 @@ const userSchema = Joi.object({
 
 app.post(
   '/user/kyc',
-  //decryptDataApi,
   checkToken,
   updateKYC
 );

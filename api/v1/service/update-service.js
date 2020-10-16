@@ -8,7 +8,7 @@ import express from 'express';
 import { createValidator } from 'express-joi-validation';
 import Joi from '@hapi/joi';
 import { update } from '../../../controllers/service'
-import { checkToken, decryptDataApi } from '../../../utilities/universal';
+import { checkToken, isAuthorizedUserForAction } from '../../../utilities/universal';
 const app = express();
 const validator = createValidator({ passError: true });
 
@@ -20,44 +20,30 @@ const validator = createValidator({ passError: true });
  *   summary: Update Service
  *   description: api used to update service
  *   parameters:
- *      - in: header
+  *      - in: header
  *        name: Authorization
  *        type: string
  *        required: true
- *      - in: body
- *        name: user
- *        description: update service
- *        schema:
- *         type: object
- *         required:
- *          - service update
- *         properties:
- *           _id:
- *             type: string
- *             required:
- *           title:
- *             type: string
- *             required:
- *           description:
- *             type: string
- *             required:
- *           file:
- *             type: object
- *           translation:
- *             type: array
- *             items:
- *               type: object
- *               description: required langulage params
- *               properties:
- *                 language:
- *                   type: string
- *                 title:
- *                   type: string
- *                 description:
- *                   type: string
- *           status:
- *             type: number
- *             required:
+ *      - in: formData
+ *        name: _id
+ *        type: string
+ *        required: true
+ *      - in: formData
+ *        name: title
+ *        type: string
+ *        required: true
+ *      - in: formData
+ *        name: description
+ *        type: string
+ *      - in: formData
+ *        name: status
+ *        type: number
+ *      - in: formData
+ *        name: file
+ *        type: file
+ *      - in: formData
+ *        name: translation
+ *        type: string
  *   responses:
  *    '200':
  *      description: success
@@ -89,6 +75,7 @@ app.put(
     joi: { convert: true, allowUnknown: false }
   }),
   checkToken,
+  isAuthorizedUserForAction,
   update
 );
 

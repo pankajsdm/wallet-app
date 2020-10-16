@@ -14,10 +14,10 @@ const validator = createValidator({ passError: true });
 // https://swagger.io/docs/specification/2-0/describing-parameters
 
 /**
- * @swagger
+ * 
  * /api/v1/user/chatbot_login:
  *  post:
- *   tags: ["user"]
+ *   tags: ["Users"]
  *   summary: user chatbot_login api
  *   description: api used to login users by chatbot
  *   parameters:

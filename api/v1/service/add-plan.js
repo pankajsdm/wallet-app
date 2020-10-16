@@ -8,7 +8,7 @@ import express from 'express';
 import { createValidator } from 'express-joi-validation';
 import Joi from '@hapi/joi';
 import { addProviderPlan } from '../../../controllers/service'
-import { checkToken, decryptDataApi } from '../../../utilities/universal';
+import { checkToken, isAuthorizedUserForAction } from '../../../utilities/universal';
 const app = express();
 const validator = createValidator({ passError: true });
 
@@ -97,6 +97,7 @@ app.post(
     joi: { convert: true, allowUnknown: false }
   }),
   checkToken,
+  isAuthorizedUserForAction,
   addProviderPlan
 );
 

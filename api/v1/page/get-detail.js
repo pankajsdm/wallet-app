@@ -12,10 +12,10 @@ const app = express();
 const validator = createValidator({ passError: true });
 
 /**
- * @swagger
+ * 
  * /api/v1/page/{type}:
  *  get:
- *   tags: ["page"]
+ *   tags: ["Pages"]
  *   summary: get page detail by type api
  *   description: api used to get page detail by type api
  *   security:

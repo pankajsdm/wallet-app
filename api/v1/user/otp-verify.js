@@ -15,7 +15,7 @@ const validator = createValidator({ passError: true });
  * @swagger
  * /api/v1/user/otp-verify:
  *  post:
- *   tags: ["user"]
+ *   tags: ["Users"]
  *   summary: otp verification
  *   description: api user to verify the user mobile otp
  *   security:

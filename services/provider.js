@@ -85,7 +85,7 @@ export const getProviderById = async payload => {
 
 /********* get provider by Id *********/
 export const getlistProviderPlan = async payload => {
-  let query = { status: 1, _id: mongoose.Types.ObjectId(payload.providerId)};
+  let query = { status: 1, _id: mongoose.Types.ObjectId(payload.providerId), "plans.status": 1};
   if(payload.search){
     const regex = new RegExp(`${payload.search}`, 'i');
     query = {
@@ -109,8 +109,7 @@ export const getlistProviderPlan = async payload => {
 
 /********* get provider by Id *********/
 export const getProviderPlanById = async payload => {
-  const getPlan =  await Provider.findPlanById(payload);
-  return getPlan;
+  return await Provider.findPlanById(payload);
 };
 
 /********* get all provider list *********/

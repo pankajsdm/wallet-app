@@ -8,10 +8,11 @@
 
 import Message from '../utilities/messages';
 import Card from '../collections/card';
+import applyCard from '../collections/apply-card';
 import { generateSlug } from '../utilities/universal';
 import { uploadFormDataFile, uploadDocument } from '../utilities/upload';
 
-/********** Add card **********/
+/***************** Add card **********/
 export const add = async payload => {
  
   payload.slug = generateSlug(payload.title);
@@ -41,8 +42,12 @@ export const add = async payload => {
       payload.image = imgObject;
       return await Card.add(payload);
     }
-
 };
+
+/********** Apply card by user **********/
+export const applyUserCard = async payload => {
+  return await applyCard.add(payload);
+}
 
 
 /********** Update card **********/

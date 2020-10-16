@@ -8,7 +8,7 @@ import express from 'express';
 import { createValidator } from 'express-joi-validation';
 import Joi from '@hapi/joi';
 import { deleteCard } from '../../../controllers/card'
-import { checkToken, decryptDataApi } from '../../../utilities/universal';
+import { checkToken, isAuthorizedUserForAction } from '../../../utilities/universal';
 const app = express();
 const validator = createValidator({ passError: true });
 
@@ -44,6 +44,7 @@ const validator = createValidator({ passError: true });
 app.delete(
   '/card/delete/:_id',
   checkToken,
+  isAuthorizedUserForAction,
   deleteCard
 );
 

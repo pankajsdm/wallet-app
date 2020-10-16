@@ -6,7 +6,6 @@ import Mongoose from "mongoose";
 import User from "../collections/user";
 import Room from "../collections/room";
 import Message from "../collections/message";
-import Notifications from "../push/notification";
 import {
   NOTIFICATION_CATEGORY,
   NOTIFICATION_MESSAGE
@@ -49,19 +48,7 @@ export default {
               return obj;
             }
           });
-          let notificationObj = {
-            targetId: targetId[0].userId,
-            message: `${message[0].userId.firstName} has sent you a message.`,
-            type: "Chat Notification",
-            data: message[0],
-            notificationType: NOTIFICATION_CATEGORY.MESSAGE,
-            title: NOTIFICATION_MESSAGE.NEWMESSAGE
-          };
-
-          console.log('chat...........',notificationObj);
-
-          Notifications.SINGLE(notificationObj);
-          callback(message[0]);
+         
         } else {
           callback(null);
         }

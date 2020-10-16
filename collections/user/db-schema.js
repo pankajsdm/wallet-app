@@ -56,7 +56,12 @@ const userSchema = new mongoose.Schema(
     */
     role: {
       type: Number,
-      default: 2 
+      default: 4 
+    },
+
+    locationId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Location"
     },
 
     profileImage: { 
@@ -90,34 +95,16 @@ const userSchema = new mongoose.Schema(
     },
 
     wallet: {
+      currency: { type: String, default: 'IQD'},
       amount: { type: Number, default: 0},
       createdAt: {type: Date, default: new Date()}
     },
 
-    loginToken: [
-      {
-        token: {
-          type: String,
-          default: ''
-        },
-        deviceToken: {
-          type: String,
-          default: null
-        },
-        deviceType: {
-          type: String,
-          default: null
-        }, // ios | android
-        createdAt: {
-          type: Date,
-          default: new Date()
-        }
-      }
-    ],
     status: {
       type: Number,
-      default: 0 
+      default: 1    /* 0 => Inactive, 1=> Active, 2 => Deleted */
     },
+
     emailVerified: {
       type: Boolean,
       default: false

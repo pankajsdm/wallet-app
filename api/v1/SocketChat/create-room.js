@@ -13,7 +13,7 @@ const validator = createValidator({ passError: true });
 // https://swagger.io/docs/specification/2-0/describing-parameters
 
 /**
- * @swagger
+ * 
  * /api/v1/create_room:
  *  post:
  *   tags: ["SocketChat"]

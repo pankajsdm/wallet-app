@@ -46,7 +46,7 @@ const providerSchema = new mongoose.Schema(
         code: { type: Number, default: null },
         price: { type: Number, default: null },
         description: { type: String, default: null },
-        status: { type: Number, default: 1 },
+        status: { type: Number, default: 1 }, /* 1=> active, 2=> expired, 3=> inactive */
         translation: [
           {
             language: { 

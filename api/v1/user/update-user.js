@@ -15,9 +15,9 @@ const validator = createValidator({ passError: true });
 
 /**
  * @swagger
- * /api/v1/user/updateUser:
- *  post:
- *   tags: ["user"]
+ * /api/v1/user/update:
+ *  put:
+ *   tags: ["Users"]
  *   summary: user update along with basic information
  *   description: api used to update user
  *   security:
@@ -27,33 +27,42 @@ const validator = createValidator({ passError: true });
  *        name: Authorization
  *        type: string
  *        required: true
- *      - in: body
- *        name: user
- *        description: update users info.
- *        schema:
- *         type: object
- *         required:
- *          - user add
- *         properties:
- *           firstName:
- *             type: string
- *             required:
- *           lastName:
- *             type: string
- *             required:
- *           city:
- *             type: string
- *             required:
- *           state:
- *             type: string
- *             required:
- *           country:
- *             type: string
- *             required:
- *           address:
- *             type: string
- *           file:
- *             type: object
+ *      - in: formData
+ *        name: email
+ *        type: string
+ *        required: true
+ *      - in: formData
+ *        name: firstName
+ *        type: string
+ *        required: true
+ *      - in: formData
+ *        name: lastName
+ *        type: string
+ *        required: true
+ *      - in: formData
+ *        name: city
+ *        type: string
+ *        required: true
+ *      - in: formData
+ *        name: state
+ *        type: string
+ *        required: true
+ *      - in: formData
+ *        name: country
+ *        type: string
+ *        required: true
+ *      - in: formData
+ *        name: address
+ *        type: string
+ *      - in: formData
+ *        name: countryCode
+ *        type: number
+ *      - in: formData
+ *        name: mobile
+ *        type: number
+ *      - in: formData
+ *        name: file
+ *        type: file
  *   responses:
  *    '200':
  *      description: success
@@ -62,6 +71,13 @@ const validator = createValidator({ passError: true });
  */
 
 const userSchema = Joi.object({
+    email: Joi.string()
+      .email()
+      .label('Email'),
+    countryCode: Joi.number()
+      .label('Country code'),
+    mobile: Joi.number()
+      .label('Mobile number'),
     firstName: Joi.string()
       .required()
       .label('First name'),
@@ -84,9 +100,8 @@ const userSchema = Joi.object({
       .label('Profile picture'),
   });
 
-app.post(
-  '/user/updateUser',
-  //decryptDataApi,
+app.put(
+  '/user/update',
   validator.body(userSchema, {
     joi: { convert: true, allowUnknown: false }
   }),

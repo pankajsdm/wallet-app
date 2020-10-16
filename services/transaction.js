@@ -14,15 +14,12 @@ import Transaction from '../collections/transaction';
 export const addTransaction = async payload => {
  
   const userData = await User.findOneByCondition({_id: payload.userId});
-  const locationData = await Location.findOneByCondition({_id: payload.locationId});
-  
   if (!userData) 
     throw new Error(Message.userNotExist);
 
-  if (!locationData) 
-    throw new Error(Message.locationNotExist);
-
-   
+  const authUser = await User.findOneByCondition({_id: payload.from});
+  if(authUser.locationId)
+    payload.locationId = authUser.locationId;
 
   let totalAmount = 0;
   if(payload.type===1){
@@ -34,9 +31,11 @@ export const addTransaction = async payload => {
       throw new Error(Message.invalidAmount);
   }
   
+
+  
   const transactionStatus =  await Transaction.add(payload);
   if(transactionStatus && userData.wallet){
-    const updatedObj = { "wallet.amount": totalAmount, userId: payload.userId }
+    const updatedObj = { "wallet.amount": totalAmount, "wallet.createdAt": new Date(), userId: payload.userId }
     await User.updateUser(updatedObj);
   }
 

@@ -12,10 +12,10 @@ const app = express();
 const validator = createValidator({ passError: true });
 
 /**
- * @swagger
+ * 
  * /api/v1/user/createConnectAccount:
  *  post:
- *   tags: ["user"]
+ *   tags: ["Users"]
  *   summary: Create Connect Account
  *   description: api used to Create Connect Account
  *   security:

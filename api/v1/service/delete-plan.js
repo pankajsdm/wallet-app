@@ -8,7 +8,7 @@ import express from 'express';
 import { createValidator } from 'express-joi-validation';
 import Joi from '@hapi/joi';
 import { deleteProviderPlan } from '../../../controllers/service'
-import { checkToken, decryptDataApi } from '../../../utilities/universal';
+import { checkToken, isAuthorizedUserForAction } from '../../../utilities/universal';
 const app = express();
 const validator = createValidator({ passError: true });
 
@@ -47,6 +47,7 @@ const validator = createValidator({ passError: true });
 app.delete(
   '/service/provider/plan/delete/:_id/:providerId',
   checkToken,
+  isAuthorizedUserForAction,
   deleteProviderPlan
 );
 

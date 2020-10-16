@@ -8,7 +8,7 @@ import express from 'express';
 import { createValidator } from 'express-joi-validation';
 import Joi from '@hapi/joi';
 import { add } from '../../../controllers/location'
-import { checkToken, decryptDataApi } from '../../../utilities/universal';
+import { checkToken, isAuthorizedUserForAction } from '../../../utilities/universal';
 const app = express();
 const validator = createValidator({ passError: true });
 
@@ -16,40 +16,44 @@ const validator = createValidator({ passError: true });
  * @swagger
  * /api/v1/location/add:
  *  post:
- *   tags: ["Location"]
+ *   tags: ["Locations"]
  *   summary: Add location for branch and marked location
- *   description: api used to location for branch and marked location
+ *   description: api used to add location for branch and marked location
  *   parameters:
  *      - in: header
  *        name: Authorization
  *        type: string
  *        required: true
- *      - in: body
- *        name: user
- *        description: Add location for branch and marked location
- *        schema:
- *         type: object
- *         required:
- *          - user add
- *         properties:
- *           role:
- *            type: number
- *            required: 
- *           title:
- *             type: string
- *             required:
- *           description:
- *             type: string
- *             required:
- *           address:
- *             type: string
- *             required:
- *           latitude:
- *             type: number
- *             required:
- *           longitude:
- *             type: number
- *             required:
+ *      - in: formData
+ *        name: role
+ *        type: string
+ *        required: true
+ *      - in: formData
+ *        name: title
+ *        type: string
+ *        required: true
+ *      - in: formData
+ *        name: description
+ *        type: string
+ *        required: true
+ *      - in: formData
+ *        name: address
+ *        type: string
+ *        required: true
+ *      - in: formData
+ *        name: latitude
+ *        type: string
+ *        required: true
+ *      - in: formData
+ *        name: longitude
+ *        type: string
+ *        required: true
+ *      - in: formData
+ *        name: file
+ *        type: file
+ *      - in: formData
+ *        name: translation
+ *        type: string
  *   responses:
  *    '200':
  *      description: success
@@ -76,6 +80,10 @@ const userSchema = Joi.object({
     longitude: Joi.number()
       .required()
       .label('Longitude'),
+    file: Joi.string()
+      .label('Service Image'),
+    translation: Joi.string()
+      .label('Translation'),
   });
 
 app.post(
@@ -84,6 +92,7 @@ app.post(
     joi: { convert: true, allowUnknown: false }
   }),
   checkToken,
+  isAuthorizedUserForAction,
   add
 );
 

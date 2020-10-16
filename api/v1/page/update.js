@@ -13,10 +13,10 @@ const app = express();
 const validator = createValidator({ passError: true });
 
 /**
- * @swagger
+ * 
  * /api/v1/page:
  *  put:
- *   tags: ["page"]
+ *   tags: ["Pages"]
  *   summary: update page api
  *   description: api used to update page
  *   security:

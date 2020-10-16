@@ -13,9 +13,11 @@ const validator = createValidator({ passError: true });
 
 /**
  * @swagger
- * /api/v1/service/provider/get:
- *  post:
+ * /api/v1/service/provider/get/{id}:
+ *  get:
  *   tags: ["Service Providers"]
+ *   consumes:
+ *    - multipart/form-data
  *   summary: get provider by id api
  *   description: api used to get provider by id
  *   security:
@@ -24,17 +26,11 @@ const validator = createValidator({ passError: true });
  *      - in: header
  *        name: Authorization
  *        type: string
+ *        required: true 
+ *      - in: path
+ *        name: id
+ *        type: string
  *        required: true
- *      - in: body
- *        name: service
- *        description: Get single provider by its id
- *        schema:
- *         type: object
- *         required:
- *          - get single provider
- *         properties:
- *           _id:
- *             type: string
  *   responses:
  *    '200':
  *      description: success
@@ -42,8 +38,8 @@ const validator = createValidator({ passError: true });
  *      description: fail
  */
 
-app.post(
-  '/service/provider/get',
+app.get(
+  '/service/provider/get/:_id',
   checkToken,
   getSingleProvider
 );

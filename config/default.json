@@ -8,6 +8,7 @@
     "webUrl": "http://localhost:3050"
   },
 "db": {
+
     "name": "walletApp",
     "host": "localhost",
     "auth": false,
@@ -21,22 +22,14 @@
       // If not connected, return errors immediately rather than waiting for reconnect
       "bufferMaxEntries": 0
     }
-  },
+},
+
   "smtp": {
-    "smtpUser": "support@bookzdoctor.com",
-    "smtpPass": "BookzDoctor1989!",
-    "smtpPort": 587, //25,
-    "smtpServer": "smtpout.secureserver.net",
-    "mailFrom": "support@bookzdoctor.com"
-  },
-  "stripe": {
-    //"secretKey": "sk_test_51GusRiIlbP5wS7hwUUCPUUWyTSMJuE748fwA1OktWuJRLBX5LJsx0qMnFsJzGC3Rn7SOvHjsser5RGTLXQS871jt00LgMrjc5q", //"sk_test_6BSWQwmxu1OlJmldUy3uLHNJ00n9eQXzfX",
-    //"publicKey": "pk_test_51GusRiIlbP5wS7hwGUsvDIwygVrL3m7xQpNCxpVOVCnpytemwDs6Kl5BM0UUb657UC7wiAwfpcB9iUHf2tn8cgGH00Wdg0QRVw",
-    "secretKey": "sk_test_51GxBM5FTMzJ0yhP1EcKqqBB3JQMRTAbgNdHaES4Tre2Rsj5iGsY0SMqIZDd11KaMgbK3f1M9V2nxpQhbfacdD4SM009U6rHPX7", //"sk_test_6BSWQwmxu1OlJmldUy3uLHNJ00n9eQXzfX",
-    "publicKey": "pk_test_51GxBM5FTMzJ0yhP1pRnivbXUS6JsTawNiIdeHQ2WQg9ZHMmNzhQPrzoqPZKD9N8Umj5LwhYGPZR9lb5WfiPGRd7e00R1qHOQn2",
-    "serviceTax" : 2,
-    "commisionFromDoctor" : 5,
-    "commisionFromPatient": 10
+    "smtpUser": "btcbabilex@gmail.com",
+    "smtpPass": "Btcbabil@4733",
+    "smtpPort": 587,
+    "smtpServer": "smtp.gmail.com",
+    "mailFrom": "btcbabilex@gmail.com"
   },
   "apn": {
     "keyId": "CKSJQFW5LZ",

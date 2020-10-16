@@ -8,7 +8,7 @@ import express from 'express';
 import { createValidator } from 'express-joi-validation';
 import Joi from '@hapi/joi';
 import { add } from '../../../controllers/transaction'
-import { checkToken, decryptDataApi } from '../../../utilities/universal';
+import { checkToken, isAuthorizedUserForAction } from '../../../utilities/universal';
 const app = express();
 const validator = createValidator({ passError: true });
 
@@ -34,10 +34,7 @@ const validator = createValidator({ passError: true });
  *         properties:
  *           userId:
  *            type: string
- *            required:  
- *           locationId:
- *            type: string
- *            required: 
+ *            required:   
  *           amount:
  *             type: number
  *             required:
@@ -55,13 +52,10 @@ const validator = createValidator({ passError: true });
  */
 
 
-const userSchema = Joi.object({
+const transactionSchema = Joi.object({
     userId: Joi.string()
       .required()
       .label('User Id'),
-    locationId: Joi.string()
-      .required()
-      .label('Location Id'),
     amount: Joi.number()
       .required()
       .label('Amount'),
@@ -74,12 +68,12 @@ const userSchema = Joi.object({
   });
 
 app.post(
-  '/trasaction/add',
-  //decryptDataApi,
-  validator.body(userSchema, {
+  '/transaction/add',
+  validator.body(transactionSchema, {
     joi: { convert: true, allowUnknown: false }
   }),
   checkToken,
+  isAuthorizedUserForAction,
   add
 );
 

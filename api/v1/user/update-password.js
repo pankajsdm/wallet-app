@@ -16,7 +16,7 @@ const app = express();
  * @swagger
  * /api/v1/user/password:
  *  put:
- *   tags: ["user"]
+ *   tags: ["Users"]
  *   summary: user password update api
  *   description: api used to update user password
  *   security:
@@ -34,7 +34,10 @@ const app = express();
  *         required:
  *          - user password
  *         properties:
- *           password:
+ *           oldPassword:
+ *             type: string
+ *             required:
+ *           currentPassword:
  *             type: string
  *             required:
  *   responses:
@@ -45,15 +48,18 @@ const app = express();
  */
 
 const userSchema = Joi.object({
-  password: Joi.string()
+  oldPassword: Joi.string()
     .trim()
     .required()
-    .label('Password')
+    .label('Old password'),
+  currentPassword: Joi.string()
+    .trim()
+    .required()
+    .label('Current password')
 });
 
 app.put(
   '/user/password',
-  //decryptDataApi,
   validator.body(userSchema, {
     joi: { convert: true, allowUnknown: false }
   }),

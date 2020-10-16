@@ -16,7 +16,7 @@ const validator = createValidator({ passError: true });
  * @swagger
  * /api/v1/location/nearby-locations:
  *  post:
- *   tags: ["Location"]
+ *   tags: ["Locations"]
  *   summary: Get nearby branch and marked location
  *   description: api used to get nearby branch and marked location
  *   parameters:

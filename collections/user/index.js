@@ -33,26 +33,15 @@ class UserClass {
   }
 
   static findByCondition(condition) {
-    return this.find({ role: { $ne: 1 }, ...condition }).populate('speciality.speclId');
+    return this.find({ role: { $ne: 1 }, ...condition });
   }
 
   static checkUsername(username) {
     return this.findOne({ username });
   }
 
-  static checkToken(token) {
-    return this.findOne({ 'loginToken.token': token });
-  }
-
-  static onLoginDone(userId, loginToken, payload = {}) {
+  static onLoginDone(userId, payload = {}) {
     let updateData = {
-      $push: {
-        loginToken: {
-          token: loginToken,
-          deviceToken: payload['deviceToken'],
-          deviceType: payload['deviceType']
-        }
-      },
       $set: {
         lastLogin: new Date()
       }
@@ -90,20 +79,17 @@ class UserClass {
     return this.updateOne({"_id": userId, "loginToken.token": token}, { $set: { "loginToken.$.deviceToken" : deviceToken } });
   }
   
-  static findUsersList(condition, pageNo, specialityId) {
-    if(specialityId){
-      condition = {...condition, "speciality.speclId" : mongoose.Types.ObjectId(specialityId)}; 
-    }
+  static findUsersList(condition, pageNo, limit) {
+
      const query = [ 
-        {$lookup: {from: "appointments", localField: "_id",foreignField: "doctorId", as: "feedbackdata"}},
-        {$lookup: {from: "specialities", localField: "speciality.speclId",foreignField: "_id", as: "specialityInfo"}},
         {$match: condition},
         {$sort: { createdAt: -1 } },
-        {$project : {"firstName": 1, "lastName": 1, "priceBracket": 1, "doctordegree": 1, "address": 1, "location": 1, "description": 1, "mobilePhone": 1, "profileVisibility": 1, "doctorlicense": 1, "licenseName": 1, "licenseExpiry": 1, "licenseCountry": 1, "profileImage": 1, "uid": 1, "email": 1, "status": 1, "speciality": "$specialityInfo", "responseTime": 1,  "night_shift": 1, "createdAt": 1, "feedbackAvg" : {$ifNull: [ {$avg: "$feedbackdata.feedback"},0]}}}
+        {$project : {"username": 1, "email": 1, "mobile": 1, "firstName": 1, "lastName": 1, "city": 1, "state": 1, "country": 1, "address": 1, "role": 1, "profileImage": 1, "kyc": 1, "wallet": 1, "status": 1, "emailVerified": 1, }}
     ]
+
     const pagination = [
-      { $skip: pageNo ? (pageNo - 1) * LIMIT.USERS : 0 },
-      { $limit: LIMIT.USERS }
+      { $skip: pageNo ? (pageNo - 1) * limit : 0 },
+      { $limit: limit }
     ];
 
     const aggregateQuery = this.aggregate([...query, ...pagination]);

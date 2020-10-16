@@ -19,9 +19,24 @@ export const LIMIT = {
   TRANSACTIONS: 10
 };
 
+/********* Error Code ********/
+export const STATUSCODE = {
+  SUCCESS: 200,
+  BADREQUEST: 400,
+  SERVERERROR: 500, 
+  UNAUTHORIZED: 501,
+  FORBIDDEN: 502,
+  NOTFOUND: 503,
+  NOTALLOWED: 504,
+  TOKENEXPIRED: 505,
+  EMAILORUSEREXIST: 506,
+  WRONGPASSWORD: 507,
+  ACCOUNTDEACTIVATED:508
+};
+
 export const TWILIO = {
   accountSid : 'AC73a69b8ea8cca6890e17fe0d104f63a7',
-  authToken  : '88e8e8943cd1685c32af41c47f51a85d',
+  authToken  : '839ed569fcb3a52db91d6bacacfc5478',
   number: '+13345440726'
 }
 

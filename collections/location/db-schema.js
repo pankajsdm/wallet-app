@@ -46,6 +46,30 @@ const locationSchema = new mongoose.Schema(
       coordinates: []
     },
 
+    image: { 
+      filename: { type: String, default: null },
+      src: { type: String, default: null },
+      thumbnail: { type: String, default: null }
+    },
+
+    translation: [
+      {
+        language: { 
+          type: String,
+          default: '' 
+        },
+        title: { 
+          type: String, 
+          default: '' 
+        },
+        description: { 
+          type: String, 
+          default: '' 
+        }
+      },
+    ],
+
+
     status: {
       type: Number,
       default: 1

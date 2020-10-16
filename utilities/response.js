@@ -22,5 +22,4 @@ export const failAction = (message = 'Fail', statusCode = 400, data = null) => {
     const encPassword = encrytedStr.secretkey;
     const encryptedData = CryptoJS.AES.encrypt(dataToEncrypt.trim(), encPassword.trim()).toString();
     return ({"encrytData": encryptedData});
-
 }

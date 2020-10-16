@@ -7,11 +7,10 @@ import md5 from 'md5';
 import jwt from 'jsonwebtoken';
 import config from 'config';
 import User from '../collections/user';
+import Token from '../collections/token';
 import { failAction } from './response';
 import Message from './messages';
-import path from 'path';
-import fs from 'fs';
-import Jimp from 'jimp';
+import { STATUSCODE } from '../utilities/constants'
 import AWS from 'aws-sdk';
 import dotenv from 'dotenv';
 import CryptoJS from "crypto-js";
@@ -48,7 +47,7 @@ export const generateRandom = (length = 32, alphanumeric = true) => {
 };
 /*********** Generate JWT token *************/
 export const generateToken = data =>
-  jwt.sign(data, jwtKey, { algorithm: jwtAlgo, expiresIn: '90d' });
+  jwt.sign(data, jwtKey, { algorithm: jwtAlgo, expiresIn: '1d' });
 
 /*********** Decode JWT token *************/
 export const decodeToken = token => jwt.verify(token, jwtKey);
@@ -57,33 +56,62 @@ export const decodeToken = token => jwt.verify(token, jwtKey);
 export const checkToken = async (req, res, next) => {
   const token = req.headers['authorization'];
   if (!token)
-    return res.status(401).json(failAction(Message.unauthorizedUser, 401));
+    return res.status(STATUSCODE.UNAUTHORIZED).json(failAction(Message.unauthorizedUser, STATUSCODE.UNAUTHORIZED));
   let decoded = {};
   try {
     decoded = jwt.verify(token, jwtKey);
   } catch (err) {
-    return res.status(401).json(failAction(Message.tokenExpired, 401));
+    return res.status(STATUSCODE.TOKENEXPIRED).json(failAction(Message.tokenExpired, STATUSCODE.TOKENEXPIRED));
   }
-  const user = await User.checkToken(token);
+  const user = await Token.checkToken(token);
   if (user) {
     req.user = { ...decoded, token };
     next();
   } else {
-    res.status(401).json(failAction(Message.unauthorizedUser, 401));
+    res.status(401).json(failAction(Message.unauthorizedUser, STATUSCODE.UNAUTHORIZED));
+  }
+};
+
+/*********** Verify token *************/
+export const isAuthorizedUserForAction = async (req, res, next) => {
+  try {
+    const token = req.headers['authorization'];
+    const user = await Token.checkToken(token);
+    const getUserDetail = await User.findOneByCondition({_id: user.userId});
+    if(getUserDetail.role===1 || getUserDetail.role===2 || getUserDetail.role===3)
+      next();
+    else
+      res.status(STATUSCODE.UNAUTHORIZED).json(failAction(Message.unauthorizedUser, 401));
+  } catch (err) {
+    res.status(STATUSCODE.UNAUTHORIZED).json(failAction(Message.unauthorizedUser, 401));
+  }
+};
+
+/*********** Verify token *************/
+export const forAdminPrivilegeToken = async (req, res, next) => {
+  try {
+    const token = req.headers['authorization'];
+    const user = await Token.checkToken(token);
+    const getUserDetail = await User.findOneByCondition({_id: user.userId});
+    if(getUserDetail.role===1)
+      next();
+    else
+      res.status(STATUSCODE.UNAUTHORIZED).json(failAction(Message.unauthorizedUser, 401));
+  } catch (err) {
+    res.status(STATUSCODE.UNAUTHORIZED).json(failAction(Message.unauthorizedUser, 401));
   }
 };
 
 
 export const checkTokenInParams = async (req, res, next) => {
   const token = req.params.token;
-  //console.log('url => ', req.originalUrl);
   if (!token)
-    return res.status(401).json(failAction(Message.unauthorizedUser, 401));
+    return res.status(STATUSCODE.UNAUTHORIZED).json(failAction(Message.unauthorizedUser, STATUSCODE.UNAUTHORIZED));
   let decoded = {};
   try {
     decoded = jwt.verify(token, jwtKey);
   } catch (err) {
-    return res.status(401).json(failAction(Message.tokenExpired, 401));
+    return res.status(STATUSCODE.TOKENEXPIRED).json(failAction(Message.tokenExpired, STATUSCODE.TOKENEXPIRED));
   }
   const user = await User.checkToken(token);
   if (user) {
@@ -141,7 +169,6 @@ export const decryptDataApi = async (req, res, next) => {
     var bytes = CryptoJS.AES.decrypt(req.body.encrytData, encrytedStr.secretkey);
     var decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
     req.body = decryptedData;
-   // console.log(req.body);
     return next();
 };
 

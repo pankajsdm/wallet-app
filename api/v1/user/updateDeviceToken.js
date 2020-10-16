@@ -16,7 +16,7 @@ const validator = createValidator({ passError: true });
  * @swagger
  * /api/v1/user/updateDeviceToken:
  *  post:
- *   tags: ["user"]
+ *   tags: ["Users"]
  *   summary: user device token update  api
  *   description: api used to update device token
  *   security:

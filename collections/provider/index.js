@@ -16,16 +16,17 @@ class ProviderClass {
       { $project: {plans: 0}},
       { $sort: { createdAt: -1 } },
    ]
-   const pagination = [
-     { $skip: pageNo ? (pageNo - 1) * limit : 0 },
-     { $limit: limit }
-   ];
 
-   const aggregateQuery = this.aggregate([...query, ...pagination]);
-   return {
-     list: aggregateQuery,
-     totalRecords: this.aggregate([...query])
-   };
+    const pagination = [
+      { $skip: pageNo ? (pageNo - 1) * limit : 0 },
+      { $limit: limit }
+    ];
+
+    const aggregateQuery = this.aggregate([...query, ...pagination]);
+    return {
+      list: aggregateQuery,
+      totalRecords: this.aggregate([...query])
+    };
  }
 
   static add(payload) {
@@ -65,6 +66,7 @@ class ProviderClass {
         "plans.$.status": payload.status,
       }
     };
+
     return this.updateOne(cond, updateData, { new: true });
   }
 
@@ -73,7 +75,7 @@ class ProviderClass {
   }
 
   static findPlanByProvider(condition, pageNo, limit) {
-
+    
     const query = [ 
       
       { $unwind: "$plans" },
@@ -90,6 +92,7 @@ class ProviderClass {
       },
       { $sort: { createdAt: -1 } },
    ]
+
    const pagination = [
      { $skip: pageNo ? (pageNo - 1) * limit : 0 },
      { $limit: limit }
@@ -100,9 +103,7 @@ class ProviderClass {
      plans: aggregateQuery,
      totalRecords: this.aggregate([...query])
    };
-
   }
-
 
   static findPlanById(payload) {
     const match = { _id : mongoose.Types.ObjectId(payload.providerId) };
@@ -110,7 +111,10 @@ class ProviderClass {
       $filter: {
         input: '$plans',
         as: 'plans',
-        cond: { $eq: ['$$plans._id', mongoose.Types.ObjectId(payload._id)]}
+        cond: { $and: [
+          { $eq: ['$$plans._id', mongoose.Types.ObjectId(payload._id)] },
+          { $eq: ['$$plans.status', 1] }
+        ] }
       }
     };
 
@@ -118,22 +122,36 @@ class ProviderClass {
       { 
         $match: match 
       },
-      {
-        $lookup: {
-            from: 'users',
-            localField: "userId",
-            foreignField: "_id",
-            as: "user"
-        }    
-      },
       { 
         $project: { 
-          user: {"wallet.amount":1},
+          image: 1,
+          userId: 1,
           plans: filteredProject
         }
-      }
+      },
+      {
+        $project:{
+            plans:1,
+            image:1
+        }
+     }
     ]
     return this.aggregate(queryCondition);
+  }
+
+  static updatePlanStatus(condition, status){
+    const cond = { 
+      _id: mongoose.Types.ObjectId(condition.providerId),
+      "plans._id": mongoose.Types.ObjectId(condition._id) 
+    }
+    
+    let updateData = {
+      $set: {
+        "plans.$.status": status,
+      }
+    };
+
+    return this.updateOne(cond, updateData, { new: true });
   }
   
   static findByCondition(condition) {
@@ -141,7 +159,7 @@ class ProviderClass {
   }
 
   static delete(condition) {
-    return this.remove({ ...condition,});
+    return this.remove({ ...condition});
   } 
 
   static deletePlan(condition) {

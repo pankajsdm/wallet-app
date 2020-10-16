@@ -21,12 +21,18 @@ const transactionSchema = new mongoose.Schema(
 
     locationId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Location"
+      ref: "Location",
+      default: null
     },
 
     amount: {
       type: Number,
       required: true
+    },
+
+    currency: {
+      type: String,
+      default: "IQD"
     },
 
     note: {

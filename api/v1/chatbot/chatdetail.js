@@ -11,7 +11,7 @@ const app = express();
 const validator = createValidator({ passError: true });
 import { checkToken, decryptDataApi } from '../../../utilities/universal';
 /**
- * @swagger
+ * 
  * /api/v1/chatbot/chatinfo:
  *  post:
  *   tags: ["chatbot"]

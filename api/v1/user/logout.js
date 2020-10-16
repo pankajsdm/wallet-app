@@ -13,7 +13,7 @@ const app = express();
  * @swagger
  * /api/v1/user/logout:
  *  delete:
- *   tags: ["user"]
+ *   tags: ["Users"]
  *   summary: user logout api
  *   description: api used to logout users
  *   security:

@@ -18,7 +18,7 @@ import { decryptDataApi } from '../../../utilities/universal';
  * @swagger
  * /api/v1/user/login:
  *  post:
- *   tags: ["user"]
+ *   tags: ["Users"]
  *   summary: User login api
  *   description: api used to login
  *   parameters:
@@ -58,13 +58,12 @@ const userSchema = Joi.object({
   role: Joi.number()
     .required()
     .allow('')
-    .valid(ROLE.ADMIN, ROLE.CENTRALOFFICEUSER, ROLE.MARKEDLOCATIONUSER)
+    .valid(ROLE.ADMIN, ROLE.CENTRALOFFICEUSER, ROLE.MARKEDLOCATIONUSER, ROLE.SUBSCRIBER)
     .label('Role')
 });
 
 app.post(
   '/user/login',
-  //decryptDataApi,
   validator.body(userSchema, {
     joi: { convert: true, allowUnknown: false }
   }),

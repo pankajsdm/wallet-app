@@ -13,17 +13,20 @@ import config from 'config';
 import * as DB from './db';
 import SwaggerJsDocs from './swagger-config';
 import SocketService from "./socket/socketService";
+var expressStaticGzip = require('express-static-gzip');
 import api from './api';
+import registerConfirmation from './common/registration-confirmation';
+
 import http from 'http';
 
 const { port } = config.get('app');
 const app = express();
 
 
-
 /* Define global path */
 global.__basedir = __dirname;
 global.__publicDir = path.join(__dirname, '/public/');
+global.__viewsDir = path.join(__dirname, '/views/');
 global.__uploadDir = path.join(__dirname, '/public/uploads/');
 global.__imageDir = path.join(__dirname, '/public/uploads/images/');
 
@@ -45,6 +48,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(SwaggerJsDocs));
 
 /* Define All Routes */
 app.use('/api/v1', api);
+app.use('/account', registerConfirmation);
 
 /* 
 * After your routes add a standard express error handler. This will be passed the Joi
@@ -52,7 +56,8 @@ app.use('/api/v1', api);
 */
 app.use((err, req, res, next) => {
   
-  console.log('i am in app.js', global.__baseAppUrl);
+  /* console.log('req.body', req.body);
+  console.log('req.files', req.files); */
   if (err && err.error && err.error.isJoi) {
     /* handing joi error, let's return a custom 400 json response */
     res
@@ -66,17 +71,19 @@ app.use((err, req, res, next) => {
 
 /* Run static setup */
 app.use(express.static(__dirname + '/views'));
-app.use(express.static(__dirname + '/views/web'));   //this is for frontend web from angular build.
-app.use(express.static(__dirname + '/views/admin')); //this is for admin panel from angular build.
+app.use(expressStaticGzip(__dirname + '/views/admin'));
+//app.use(express.static(__dirname + '/views/account/confirmation'));
 app.use(express.static(__dirname + '/public/uploads'));
 
-app.get('/admin*', function(req, res) {
+app.get('/admin/*', function(req, res) {
+  console.log("I am admin")
   return res.sendFile(path.join(__dirname + '/views/admin', 'index.html'));
 });
 
-app.get('/*', function(req, res) {
-  return res.sendFile(path.join(__dirname + '/views/web', 'index.html'));
-});
+/* app.get('/account/confirmation/:token', function(req, res) {
+  console.log("I am token", req.params)
+  //return res.sendFile(path.join(__dirname + '/views/account/confirmation', 'index.html'));
+}); */
 
 
 /* check mongose connection */

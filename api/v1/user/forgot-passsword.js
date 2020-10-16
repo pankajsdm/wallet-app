@@ -15,7 +15,7 @@ const validator = createValidator({ passError: true });
  * @swagger
  * /api/v1/user/forgot-password:
  *  put:
- *   tags: ["user"]
+ *   tags: ["Users"]
  *   summary: send forgot pasword link api
  *   description: api used to send forgot password link in email.
  *   parameters:

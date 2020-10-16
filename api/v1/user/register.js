@@ -16,7 +16,7 @@ const validator = createValidator({ passError: true });
  * @swagger
  * /api/v1/user/register:
  *  post:
- *   tags: ["user"]
+ *   tags: ["Users"]
  *   summary: Register user
  *   description: api used to register the user
  *   parameters:
@@ -72,7 +72,7 @@ const userSchema = Joi.object({
       .label('Password'),
     role: Joi.number()
       .required()
-      .valid(ROLE.ADMIN, ROLE.CENTRALOFFICEUSER, ROLE.MARKEDLOCATIONUSER, ROLE.SUBSCRIBER)
+      .valid(ROLE.CENTRALOFFICEUSER, ROLE.MARKEDLOCATIONUSER, ROLE.SUBSCRIBER)
       .label('Role')
   });
 

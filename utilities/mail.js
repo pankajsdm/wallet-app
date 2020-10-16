@@ -25,7 +25,7 @@ export const subjects = {
   userAccount: 'Account Verification',
   userLogin: 'Login Confirmation Email',
   forgotPassword: 'Forgot Pasword',
-  licenseApprove: 'Bookzdoctor Approval'
+  licenseApprove: 'BaPay Wallet Approval'
 };
 
 const dirPath = '../email-templates/';
@@ -36,6 +36,8 @@ export const htmlFromatWithObject = async (request, file) => {
 };
 
 export const sendMail = (request, cb) => {
+
+  //console.log("smtpUser", smtpUser, smtpPass, smtpServer)
   let options = {
     from: mailFrom,
     to: request.to, // list of receivers
